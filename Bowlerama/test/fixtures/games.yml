@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  current_frame: 1
+  frame_stroke: 1
+  total_score: 1
+
+two:
+  current_frame: 1
+  frame_stroke: 1
+  total_score: 1

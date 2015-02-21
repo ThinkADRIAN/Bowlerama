@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Current frame:</strong>
+  <%= @game.current_frame %>
+</p>
+
+<p>
+  <strong>Frame stroke:</strong>
+  <%= @game.frame_stroke %>
+</p>
+
+<p>
+  <strong>Total score:</strong>
+  <%= @game.total_score %>
+</p>
+
+<%= link_to 'Edit', edit_game_path(@game) %> |
+<%= link_to 'Back', games_path %>
