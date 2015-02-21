@@ -86,37 +86,43 @@ Player
 	}
 
 	markScorecard(frame_to_score) {
-		# Handle Strikes for frames 1 through 9
-		if @frame_stroke == 1 && @pins_left == 0
-			if @current_frame < 10 
+		# Handle Strikes and Spares for frames 1 through 9
+		if @current_frame < 10 && @pins_left == 0
+			if @frame_stroke == 1
 				@first_strokes[frame_to_score - 1] = "X"
+			elsif @frame_stroke == 2 
+				@second_strokes[frame_to_score - 1] = "/"
 			end
-		# Handle Strikes and Spares in other frames
-		elsif @frame_stroke != 1 @pins_left == 0
-			#Handle Strikes in frame 10
-			if current_frame == 10 && @scorecard.last == 0
-				if @frame_stroke == 2
+		
+		# Handle Strikes and Spares for frame 10
+		elsif current_frame == 10 && @pins_left == 0
+			if @frame_stroke == 1 
+				@first_strokes[frame_to_score - 1] = "X"
+			elsif @frame_stroke == 2
+				if isLastTurnStrike
 					@second_strokes[frame_to_score - 1] = "X"
 				else
-					@extra_stroke = "X"
+					@second_strokes[frame_to_score - 1] = "X"
 				end
-			# Handle Spares for all frames
-			else
-				if @frame_stroke == 2
-					@second_strokes[frame_to_score - 1] = "/"
-				elsif @frame_stroke == 3
+			elsif @frame_stroke == 3
+				if isLastTurnStrike || isLastTurnSpare
+					@extra_stroke = "X"
+				else
 					@extra_stroke = "/"
+				end
 			end
-		# Handle Gutter Balls and zero pins bowled
+		
+		# Handle Zero pins bowled
 		elsif @bowled_pins == 0
 			if @frame_stroke == 1
 				@first_strokes[frame_to_score - 1] = "-"
 			elsif @frame_stroke == 2
 				@second_strokes[frame_to_score - 1] = "-"
-			else
+			elsif @frame_stroke == 3
 				@extra_stroke = "-"
 			end
-		# Handle other strokes
+		
+		# Handle all other strokes
 		else
 			if @frame_stroke == 1 
 				@first_strokes[frame_to_score - 1] = @bowled_pins
