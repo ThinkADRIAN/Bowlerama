@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  first_stroke: MyString
+  second_stroke: MyString
+  extra_stroke: MyString
+  frame_score: 1
+  frame_number: 1
+
+two:
+  first_stroke: MyString
+  second_stroke: MyString
+  extra_stroke: MyString
+  frame_score: 1
+  frame_number: 1

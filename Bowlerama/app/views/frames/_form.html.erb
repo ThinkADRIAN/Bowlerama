@@ -1,0 +1,37 @@
+<%= form_for(@frame) do |f| %>
+  <% if @frame.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@frame.errors.count, "error") %> prohibited this frame from being saved:</h2>
+
+      <ul>
+      <% @frame.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :first_stroke %><br>
+    <%= f.text_field :first_stroke %>
+  </div>
+  <div class="field">
+    <%= f.label :second_stroke %><br>
+    <%= f.text_field :second_stroke %>
+  </div>
+  <div class="field">
+    <%= f.label :extra_stroke %><br>
+    <%= f.text_field :extra_stroke %>
+  </div>
+  <div class="field">
+    <%= f.label :frame_score %><br>
+    <%= f.number_field :frame_score %>
+  </div>
+  <div class="field">
+    <%= f.label :frame_number %><br>
+    <%= f.number_field :frame_number %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

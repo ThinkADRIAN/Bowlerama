@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>First stroke:</strong>
+  <%= @frame.first_stroke %>
+</p>
+
+<p>
+  <strong>Second stroke:</strong>
+  <%= @frame.second_stroke %>
+</p>
+
+<p>
+  <strong>Extra stroke:</strong>
+  <%= @frame.extra_stroke %>
+</p>
+
+<p>
+  <strong>Frame score:</strong>
+  <%= @frame.frame_score %>
+</p>
+
+<p>
+  <strong>Frame number:</strong>
+  <%= @frame.frame_number %>
+</p>
+
+<%= link_to 'Edit', edit_frame_path(@frame) %> |
+<%= link_to 'Back', frames_path %>
