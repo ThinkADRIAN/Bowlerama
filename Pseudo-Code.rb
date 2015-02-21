@@ -1,9 +1,30 @@
 Pseudo-Code
 
-Games has_many Players
-Player has_many Frames
-Players belongs_to Game
-Frames belongs_to Player
+Player has_many Games
+Game has_many Frames
+Game belongs_to Player
+Frames belongs_to Game
+
+# Model
+Player
+	
+
+Game
+	current_frame integer
+	frame_stroke integer
+	total_score integer
+
+Frame
+	first_stroke string
+	second_stroke string
+	extra_stoke string
+	frame_score integer
+	frame_number integer
+
+# Controller
+	Game
+		bowl
+		reset
 
 Player
 	@first_strokes[0-9]
@@ -129,6 +150,6 @@ Player
 			elsif @frame_stroke == 2
 				@second_strokes[frame_to_score - 1] = @bowled_pins
 			else
-				@extra_stroke = @bowled_pins
+				@extra_stroke = @bowled_pins.to_s
 		end
 	}
