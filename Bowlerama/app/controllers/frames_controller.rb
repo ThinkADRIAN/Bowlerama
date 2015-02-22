@@ -25,6 +25,12 @@ class FramesController < ApplicationController
   # POST /frames.json
   def create
     @frame = Frame.new(frame_params)
+    
+    @frame.first_stroke = ""
+    @frame.second_stroke = ""
+    @frame.extra_stroke = ""
+    @frame.frame_score = @frame.getLastScore
+    @frame.frame_number = @frame.incrementFrameNumber
 
     respond_to do |format|
       if @frame.save
@@ -70,5 +76,9 @@ class FramesController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def frame_params
       params.require(:frame).permit(:first_stroke, :second_stroke, :extra_stroke, :frame_score, :frame_number)
+    end
+
+    def calculateFrameScore( frame_number )
+    
     end
 end
