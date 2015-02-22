@@ -68,7 +68,9 @@ class GamesController < ApplicationController
   end
 
   def bowl
-    @game.resetPinsIfNecessary
+    @game = Game.find(params[:id])
+
+    resetPinsIfNecessary
 
     # Create new frame if necessary
     if @game.frame_stroke == 2
@@ -99,12 +101,12 @@ class GamesController < ApplicationController
       end
     end
 
-    @game.markScorecard
+    markScorecard
 
     respond_to do |format|
       if @game.update(game_params)
-        format.html { redirect_to @game, notice: 'Game was successfully updated.' }
-        format.json { render :show, status: :ok, location: @game }
+        format.html { redirect_to games_url, notice: 'Game was successfully updated.' }
+        format.json { render :show, status: :ok, location: games_url }
       else
         format.html { render :edit }
         format.json { render json: @game.errors, status: :unprocessable_entity }
@@ -142,57 +144,57 @@ class GamesController < ApplicationController
       end
     end
 
-    def markScorecard (frame_to_score)
+    def markScorecard
       # Handle Strikes and Spares for frames 1 through 9
       if @game.current_frame < 10 && @pins_left == 0
         if @game.frame_stroke == 1
-          @game.frame.first_stroke = "X"
+          @game.frames.first_stroke = "X"
         elsif @frame_stroke == 2 
-          @game.frame.second_strokes = "/"
+          @game.frames.second_stroke = "/"
         end
       
       # Handle Strikes and Spares for frame 10
       elsif @game.current_frame == 10 && @pins_left == 0
         if @game.frame_stroke == 1 
-          @game.frame.first_stroke = "X"
+          @game.frames.first_stroke = "X"
         elsif @frame_stroke == 2
           if isLastTurnStrike
-            @game.frame.second_strokes = "X"
+            @game.frames.second_stroke = "X"
           else
-            @game.frame.second_strokes = "/"
+            @game.frames.second_stroke = "/"
           end
         elsif @game.frame_stroke == 3
           if isLastTurnStrike || isLastTurnSpare
-            @game.frame.extra_stroke = "X"
+            @game.frames.extra_stroke = "X"
           else
-            @@game.frame.extra_stroke = "/"
+            @@game.frames.extra_stroke = "/"
           end
         end
       
       # Handle Zero pins bowled
       elsif @bowled_pins == 0
         if @game.frame_stroke == 1
-          @game.frame.first_stroke = "-"
+          @game.frames.first_stroke = "-"
         elsif @game.frame_stroke == 2
-          @game.frame.second_strokes = "-"
+          @game.frames.second_stroke = "-"
         elsif @game.frame_stroke == 3
-          @game.frame.extra_stroke = "-"
+          @game.frames.extra_stroke = "-"
         end
       
       # Handle all other strokes
       else
         if @game.frame_stroke == 1 
-          @game.frame.first_stroke = @bowled_pins.to_s
+          @game.frames.first_stroke = @bowled_pins.to_s
         elsif @game.frame_stroke == 2
-          @game.frame.second_strokes = @bowled_pins.to_s
+          @game.frames.second_stroke = @bowled_pins.to_s
         else
-          @game.frame.extra_stroke = @bowled_pins.to_s
+          @game.frames.extra_stroke = @bowled_pins.to_s
         end
       end
     end
 
     def resetPinsIfNecessary
-      if ( @game.frame_stroke == 2 && @game.current_frame < 10 ) || @game.isLastTurnStrike || @game.isLastTurnSpare
+      if ( @game.frame_stroke == 2 && @game.current_frame < 10 ) || isLastTurnStrike || isLastTurnSpare
         @pins_left = 10
         @bowled_pins = 0
       end
@@ -212,6 +214,7 @@ class GamesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def game_params
-      params.require(:game).permit(:current_frame, :frame_stroke, :total_score)
+      params.require(:game).permit(:current_frame, :frame_stroke, :total_score, 
+        frames_attributes: [:first_stroke , :second_stroke, :extra_stroke])
     end
 end
