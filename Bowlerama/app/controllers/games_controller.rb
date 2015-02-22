@@ -25,6 +25,12 @@ class GamesController < ApplicationController
   # POST /games.json
   def create
     @game = Game.new(game_params)
+    
+    @bowled_pins = 0
+    @pins_left = 10
+    @game.current_frame = 1
+    @game.frame_stroke = 1
+    @game.total_score = 0
 
     respond_to do |format|
       if @game.save
@@ -61,10 +67,146 @@ class GamesController < ApplicationController
     end
   end
 
+  def bowl
+    @game.resetPinsIfNecessary
+
+    # Create new frame if necessary
+    if @game.frame_stroke == 2
+      @game.resetPins
+      @game.incrementFrameCount
+      @frame = @game.frames.create(frame_number: @game.current_frame)
+    end
+
+    # Handle first stroke for all frames
+    if @game.frame_stroke == 1 && @game.current_frame <= 10
+      @bowled_pins = randomizePinCount( 0, 10 )
+      @pins_left = @bowled_pins - 10
+    
+    # Handle second stroke for frames 1 through 9
+    elsif @game.frame_stroke == 2 && @game.current_frame < 10
+      @pins_left = @bowled_pins - 10
+      @pins_left = randomizePinCount( 0, @pins_left )
+      @bowled_pins = @pins_left
+
+    # Handle second and third stroke for frame 10  
+    elsif @game.frame_stroke != 1 && @game.current_frame == 10
+      if @game.isLastTurnStrike()  || @game.isLastTurnSpare()
+        @bowled_pins = randomizePinCount( 0, 10 )
+      else
+        @pins_left = @bowled_pins - 10
+        @pins_left = randomizePinCount( 0, @pins_left )
+        @bowled_pins = @pins_left
+      end
+    end
+
+    @game.markScorecard
+
+    respond_to do |format|
+      if @game.update(game_params)
+        format.html { redirect_to @game, notice: 'Game was successfully updated.' }
+        format.json { render :show, status: :ok, location: @game }
+      else
+        format.html { render :edit }
+        format.json { render json: @game.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def reset
+    @game.destroy
+    respond_to do |format|
+      format.html { redirect_to games_url, notice: 'Game was successfully destroyed.' }
+      format.json { head :no_content }
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_game
       @game = Game.find(params[:id])
+    end
+
+    def randomizePinCount ( start_value, finish_value)
+      return rand( start_value..finish_value )
+    end
+
+    def incrementFrameCount
+      @game.current_frame += 1
+    end
+
+    def advanceFrameStroke
+      if @game.frame_stroke == 1
+        @game.frame_stroke == 2
+      else
+        @game.frame_stroke == 1
+      end
+    end
+
+    def markScorecard (frame_to_score)
+      # Handle Strikes and Spares for frames 1 through 9
+      if @game.current_frame < 10 && @pins_left == 0
+        if @game.frame_stroke == 1
+          @first_strokes[frame_to_score - 1] = "X"
+        elsif @frame_stroke == 2 
+          @second_strokes[frame_to_score - 1] = "/"
+        end
+      
+      # Handle Strikes and Spares for frame 10
+      elsif @game.current_frame == 10 && @pins_left == 0
+        if @game.frame_stroke == 1 
+          @first_strokes[frame_to_score - 1] = "X"
+        elsif @frame_stroke == 2
+          if isLastTurnStrike
+            @second_strokes[frame_to_score - 1] = "X"
+          else
+            @second_strokes[frame_to_score - 1] = "X"
+          end
+        elsif @game.frame_stroke == 3
+          if isLastTurnStrike || isLastTurnSpare
+            @extra_stroke = "X"
+          else
+            @extra_stroke = "/"
+          end
+        end
+      
+      # Handle Zero pins bowled
+      elsif @bowled_pins == 0
+        if @game.frame_stroke == 1
+          @first_strokes[frame_to_score - 1] = "-"
+        elsif @game.frame_stroke == 2
+          @second_strokes[frame_to_score - 1] = "-"
+        elsif @game.frame_stroke == 3
+          @extra_stroke = "-"
+        end
+      
+      # Handle all other strokes
+      else
+        if @game.frame_stroke == 1 
+          @first_strokes[frame_to_score - 1] = @bowled_pins
+        elsif @game.frame_stroke == 2
+          @second_strokes[frame_to_score - 1] = @bowled_pins
+        else
+          @extra_stroke = @bowled_pins.to_s
+      end
+    end
+
+    def resetPinsIfNecessary
+      if ( @game.frame_stroke == 2 && @game.current_frame < 10 ) || @game.isLastTurnStrike || @game.isLastTurnSpare
+        @pins_left = 10
+        @bowled_pins = 0
+      end
+    end
+
+    def isLastTurnStrike
+
+    end
+
+    def isLastTurnSpare
+
+    end
+
+    def calculateTotalScore
+      # Calculate the sum of values in @frame_scores
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
