@@ -1,5 +1,25 @@
 Pseudo-Code
 
+Current Feature:
+
+	Bowl Action for Games Controller
+
+Upcoming Features:
+
+	Bowl Button
+	Reset Game Button
+	Show Scorecard (Use Tables)
+
+Current Challenge:
+
+	Accessing Nested Attribute for Frames in Games Controller
+
+Upcoming Challenges:
+
+	Table Formatting of Scorecard
+
+----------
+
 Player has_many Games
 Game has_many Frames
 Game belongs_to Player
