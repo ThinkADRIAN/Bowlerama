@@ -25,7 +25,7 @@ class FramesController < ApplicationController
   # POST /frames.json
   def create
     @frame = Frame.new(frame_params)
-    
+
     @frame.first_stroke = ""
     @frame.second_stroke = ""
     @frame.extra_stroke = ""
@@ -78,7 +78,15 @@ class FramesController < ApplicationController
       params.require(:frame).permit(:first_stroke, :second_stroke, :extra_stroke, :frame_score, :frame_number)
     end
 
+    def getLastScore
+      return @frames.last.frame_score
+    end
+
+    def incrementFrameNumber
+      @frame.frame_number = @frames.last.frame_number + 1
+    end
+
     def calculateFrameScore( frame_number )
-    
+      
     end
 end
