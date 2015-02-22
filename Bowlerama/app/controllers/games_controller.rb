@@ -187,6 +187,7 @@ class GamesController < ApplicationController
           @game.frame.second_strokes = @bowled_pins.to_s
         else
           @game.frame.extra_stroke = @bowled_pins.to_s
+        end
       end
     end
 
