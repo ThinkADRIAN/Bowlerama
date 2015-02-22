@@ -25,7 +25,7 @@ class GamesController < ApplicationController
   # POST /games.json
   def create
     @game = Game.new(game_params)
-    
+
     @bowled_pins = 0
     @pins_left = 10
     @game.current_frame = 1
@@ -146,47 +146,47 @@ class GamesController < ApplicationController
       # Handle Strikes and Spares for frames 1 through 9
       if @game.current_frame < 10 && @pins_left == 0
         if @game.frame_stroke == 1
-          @first_strokes[frame_to_score - 1] = "X"
+          @game.frame.first_stroke = "X"
         elsif @frame_stroke == 2 
-          @second_strokes[frame_to_score - 1] = "/"
+          @game.frame.second_strokes = "/"
         end
       
       # Handle Strikes and Spares for frame 10
       elsif @game.current_frame == 10 && @pins_left == 0
         if @game.frame_stroke == 1 
-          @first_strokes[frame_to_score - 1] = "X"
+          @game.frame.first_stroke = "X"
         elsif @frame_stroke == 2
           if isLastTurnStrike
-            @second_strokes[frame_to_score - 1] = "X"
+            @game.frame.second_strokes = "X"
           else
-            @second_strokes[frame_to_score - 1] = "X"
+            @game.frame.second_strokes = "/"
           end
         elsif @game.frame_stroke == 3
           if isLastTurnStrike || isLastTurnSpare
-            @extra_stroke = "X"
+            @game.frame.extra_stroke = "X"
           else
-            @extra_stroke = "/"
+            @@game.frame.extra_stroke = "/"
           end
         end
       
       # Handle Zero pins bowled
       elsif @bowled_pins == 0
         if @game.frame_stroke == 1
-          @first_strokes[frame_to_score - 1] = "-"
+          @game.frame.first_stroke = "-"
         elsif @game.frame_stroke == 2
-          @second_strokes[frame_to_score - 1] = "-"
+          @game.frame.second_strokes = "-"
         elsif @game.frame_stroke == 3
-          @extra_stroke = "-"
+          @game.frame.extra_stroke = "-"
         end
       
       # Handle all other strokes
       else
         if @game.frame_stroke == 1 
-          @first_strokes[frame_to_score - 1] = @bowled_pins
+          @game.frame.first_stroke = @bowled_pins.to_s
         elsif @game.frame_stroke == 2
-          @second_strokes[frame_to_score - 1] = @bowled_pins
+          @game.frame.second_strokes = @bowled_pins.to_s
         else
-          @extra_stroke = @bowled_pins.to_s
+          @game.frame.extra_stroke = @bowled_pins.to_s
       end
     end
 
