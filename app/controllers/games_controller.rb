@@ -1,5 +1,5 @@
 class GamesController < ApplicationController
-  before_action :set_game, only: [:show, :edit, :update, :destroy]
+  before_action :set_game, only: [:show, :edit, :update, :destroy, :bowl]
 
   # GET /games
   # GET /games.json
@@ -70,13 +70,10 @@ class GamesController < ApplicationController
   end
 
   def bowl
-    @game = Game.find(params[:id])
-
     resetPinsIfNecessary
 
     # Create new frame if necessary
     if @game.frame_stroke == 2
-      resetPinsIfNecessary
       incrementFrameCount
       @frame = @game.frames.create(frame_number: @game.current_frame)
     end
@@ -84,11 +81,11 @@ class GamesController < ApplicationController
     # Handle first stroke for all frames
     if @game.frame_stroke == 1 && @game.current_frame <= 10
       @bowled_pins = randomizePinCount( 0, 10 )
-      @pins_left = @bowled_pins - 10
+      @pins_left = 10 - @bowled_pins
     
     # Handle second stroke for frames 1 through 9
     elsif @game.frame_stroke == 2 && @game.current_frame < 10
-      @pins_left = @bowled_pins - 10
+      @pins_left = 10 - @bowled_pins
       @pins_left = randomizePinCount( 0, @pins_left )
       @bowled_pins = @pins_left
 
@@ -97,7 +94,7 @@ class GamesController < ApplicationController
       if @game.isLastTurnStrike()  || @game.isLastTurnSpare()
         @bowled_pins = randomizePinCount( 0, 10 )
       else
-        @pins_left = @bowled_pins - 10
+        @pins_left = 10 - @bowled_pins
         @pins_left = randomizePinCount( 0, @pins_left )
         @bowled_pins = @pins_left
       end
@@ -167,7 +164,7 @@ class GamesController < ApplicationController
       if @game.current_frame < 10 && @pins_left == 0
         if @game.frame_stroke == 1
           @game.frames.where(frame_number: @game.current_frame).update_all(first_stroke: "X")
-        elsif @frame_stroke == 2
+        elsif @game.frame_stroke == 2
           @game.frames.where(frame_number: @game.current_frame).update_all(second_stroke: "/")
         end
       
@@ -175,7 +172,7 @@ class GamesController < ApplicationController
       elsif @game.current_frame == 10 && @pins_left == 0
         if @game.frame_stroke == 1
           @game.frames.where(frame_number: @game.current_frame).update_all(first_stroke: "X")
-        elsif @frame_stroke == 2
+        elsif @game.frame_stroke == 2
           if isLastTurnStrike
             @game.frames.where(frame_number: @game.current_frame).update_all(second_stroke: "X")
           else
