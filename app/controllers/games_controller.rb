@@ -16,8 +16,8 @@ class GamesController < ApplicationController
   def new
     @game = Game.new
 
-    @game.bowled_pins = 0
-    @game.pins_left = 10
+    #@game.bowled_pins = 0
+    #@game.pins_left = 10
     @game.current_frame = 1
     @game.frame_stroke = 1
     @game.total_score = 0
@@ -70,32 +70,11 @@ class GamesController < ApplicationController
   end
 
   def bowl
-    if !isGameOver
+    if !@game.isGameOver
 
-      resetPinsIfNecessary
+      @game.rollBall
 
-      # Handle first stroke for all frames
-      if @game.frame_stroke == 1 && @game.current_frame <= 10
-        @game.bowled_pins = randomizePinCount( 0, 10 )
-        @game.pins_left = 10 - @game.bowled_pins
-      
-      # Handle second stroke for frames 1 through 9
-      elsif @game.frame_stroke == 2 && @game.current_frame < 10
-        @game.bowled_pins = randomizePinCount( 0, @game.pins_left )
-        @game.pins_left = @game.pins_left - @game.bowled_pins
-
-      # Handle second and third stroke for frame 10  
-      elsif @game.frame_stroke != 1 && @game.current_frame == 10
-        if isLastTurnStrike?()  || isLastTurnSpare?()
-          @game.bowled_pins = randomizePinCount( 0, 10 )
-          @game.pins_left = 10 - @game.bowled_pins
-        else
-          @game.bowled_pins = randomizePinCount( 0, 10 )
-          @game.pins_left = 10 - @game.bowled_pins
-        end
-      end
-
-      markScorecard
+      @game.markScorecard
 
       respond_to do |format|
         if @game.save
@@ -132,124 +111,5 @@ class GamesController < ApplicationController
     def game_params
       params.require(:game).permit(:current_frame, :frame_stroke, :total_score, 
         frames_attributes: [:first_stroke , :second_stroke, :extra_stroke])
-    end
-
-    def resetPinsIfNecessary
-      if ( @game.frame_stroke == 1 && @game.current_frame < 10 ) || isLastTurnStrike? || isLastTurnSpare?
-        @pins_left = 10
-        @bowled_pins = 0
-      end
-    end
-
-    def randomizePinCount( start_value, finish_value )
-      return rand( start_value..finish_value )
-    end
-
-
-    def incrementFrameCount
-      if @game.current_frame < 10
-        @game.current_frame += 1
-        @frame = @game.frames.create(frame_number: @game.current_frame)
-      end
-    end
-
-    def advanceFrameStroke
-      if @game.frame_stroke == 1
-        @game.frame_stroke = 2
-      else
-        @game.frame_stroke = 1
-      end
-    end
-
-    def endGame
-      @game.frame_stroke = -1
-    end
-
-    def markScorecard
-      # Handle Strikes and Spares for frames 1 through 9
-      if @game.current_frame < 10 && @game.pins_left == 0
-        if @game.frame_stroke == 1
-          @game.frames.where(frame_number: @game.current_frame).update_all(first_stroke: "X")
-        elsif @game.frame_stroke == 2
-          @game.frames.where(frame_number: @game.current_frame).update_all(second_stroke: "/")
-        end
-        @game.frame_stroke = 1
-        incrementFrameCount
-      # Handle Strikes and Spares for frame 10
-      elsif @game.current_frame == 10 && @pins_left == 0
-        if @game.frame_stroke == 1
-          @game.frames.where(frame_number: @game.current_frame).update_all(first_stroke: "X")
-          incrementFrameCount
-        elsif @game.frame_stroke == 2
-          if isLastTurnStrike?
-            @game.frames.where(frame_number: @game.current_frame).update_all(second_stroke: "X")
-          else
-            @game.frames.where(frame_number: @game.current_frame).update_all(second_stroke: "/")
-          end
-          endGame
-        elsif @game.frame_stroke == 3
-          if isLastTurnStrike? || isLastTurnSpare?
-            @game.frames.where(frame_number: @game.current_frame).update_all(extra_stroke: "X")
-          else
-            @game.frames.where(frame_number: @game.current_frame).update_all(extra_stroke: "/")
-          end
-          endGame
-        end
-      
-      # Handle Zero pins bowled
-      elsif @game.bowled_pins == 0
-        if @game.frame_stroke == 1
-          @game.frames.where(frame_number: @game.current_frame).update_all(first_stroke: "-")
-          advanceFrameStroke
-        elsif @game.frame_stroke == 2
-          @game.frames.where(frame_number: @game.current_frame).update_all(second_stroke: "-")
-          advanceFrameStroke
-          incrementFrameCount
-        elsif @game.frame_stroke == 3
-          @game.frames.where(frame_number: @game.current_frame).update_all(extra_stroke: "-")
-          endGame
-        end
-      # Handle all other strokes
-      else
-        if @game.frame_stroke == 1 
-          @game.frames.where(frame_number: @game.current_frame).update_all(first_stroke: @game.bowled_pins)
-          advanceFrameStroke
-        elsif @game.frame_stroke == 2
-          @game.frames.where(frame_number: @game.current_frame).update_all(second_stroke: @game.bowled_pins)
-          advanceFrameStroke
-          incrementFrameCount
-          if @game.current_frame == 10
-            endGame
-          end
-        else
-          endGame
-        end
-      end
-    end
-
-    def isLastTurnStrike?
-      isStrike?(@game.current_frame-1)
-    end
-
-    def isLastTurnSpare?
-      isSpare?(@game.current_frame-1)
-    end
-
-    def isStrike?(frame_to_check)
-      @game.frames.where(frame_number: frame_to_check, first_stroke: "X") ||
-      @game.frames.where(frame_number: frame_to_check, second_stroke: "X")
-    end
-
-    def isSpare?(frame_to_check)
-      @game.frames.where(frame_number: frame_to_check, second_stroke: "/") || 
-      @game.frames.where(frame_number: frame_to_check, extra_stroke: "/")
-    end
-
-    def calculateTotalScore
-      # Calculate the sum of values in @frame_scores
-    end
-
-    def isGameOver
-      @game.frame_stroke == -1
     end
 end
