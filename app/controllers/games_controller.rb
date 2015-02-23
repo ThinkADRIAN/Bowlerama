@@ -213,11 +213,12 @@ class GamesController < ApplicationController
     end
 
     def isLastTurnStrike
-
+      @game.frames.where(frame_number: @game.current_frame-1, first_stroke: "X") ||
+      @game.frames.where(frame_number: @game.current_frame-1, second_stroke: "X")
     end
 
     def isLastTurnSpare
-
+      @game.frames.where(frame_number: @game.current_frame-1, second_stroke: "/")
     end
 
     def calculateTotalScore

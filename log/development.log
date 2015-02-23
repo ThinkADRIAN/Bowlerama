@@ -36159,3 +36159,334 @@ Started GET "/assets/games.js?body=1" for 127.0.0.1 at 2015-02-23 00:37:18 -0500
 
 
 Started GET "/assets/application.js?body=1" for 127.0.0.1 at 2015-02-23 00:37:18 -0500
+
+
+Started PUT "/games/66/bowl" for 127.0.0.1 at 2015-02-23 00:50:41 -0500
+Processing by GamesController#bowl as HTML
+  Parameters: {"authenticity_token"=>"H7mT/JZvWqsStuk02KLZ31dDktJtrJsuTYflnOs/7qY=", "id"=>"66"}
+  [1m[36mGame Load (0.1ms)[0m  [1mSELECT  "games".* FROM "games"  WHERE "games"."id" = ? LIMIT 1[0m  [["id", 66]]
+  [1m[35mSQL (1.8ms)[0m  UPDATE "frames" SET "first_stroke" = 9 WHERE "frames"."game_id" = ? AND "frames"."frame_number" = 10  [["game_id", 66]]
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+  [1m[35mSQL (0.2ms)[0m  UPDATE "games" SET "bowled_pins" = ?, "frame_stroke" = ?, "pins_left" = ?, "updated_at" = ? WHERE "games"."id" = 66  [["bowled_pins", 9], ["frame_stroke", 2], ["pins_left", 1], ["updated_at", "2015-02-23 05:50:41.980108"]]
+  [1m[36m (1.2ms)[0m  [1mcommit transaction[0m
+Redirected to http://localhost:3000/games
+Completed 302 Found in 15ms (ActiveRecord: 4.0ms)
+
+
+Started GET "/games" for 127.0.0.1 at 2015-02-23 00:50:41 -0500
+Processing by GamesController#index as HTML
+  [1m[35mGame Load (0.1ms)[0m  SELECT "games".* FROM "games"
+  Rendered games/index.html.erb within layouts/application (1.5ms)
+Completed 200 OK in 38ms (Views: 37.5ms | ActiveRecord: 0.1ms)
+
+
+Started GET "/assets/frames.css?body=1" for 127.0.0.1 at 2015-02-23 00:50:42 -0500
+
+
+Started GET "/assets/scaffolds.css?body=1" for 127.0.0.1 at 2015-02-23 00:50:42 -0500
+
+
+Started GET "/assets/jquery.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:42 -0500
+
+
+Started GET "/assets/turbolinks.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:42 -0500
+
+
+Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:42 -0500
+
+
+Started GET "/assets/application.css?body=1" for 127.0.0.1 at 2015-02-23 00:50:42 -0500
+
+
+Started GET "/assets/games.css?body=1" for 127.0.0.1 at 2015-02-23 00:50:42 -0500
+
+
+Started GET "/assets/frames.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:42 -0500
+
+
+Started GET "/assets/application.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:42 -0500
+
+
+Started GET "/assets/games.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:42 -0500
+
+
+Started PUT "/games/66/bowl" for 127.0.0.1 at 2015-02-23 00:50:43 -0500
+Processing by GamesController#bowl as HTML
+  Parameters: {"authenticity_token"=>"H7mT/JZvWqsStuk02KLZ31dDktJtrJsuTYflnOs/7qY=", "id"=>"66"}
+  [1m[36mGame Load (0.1ms)[0m  [1mSELECT  "games".* FROM "games"  WHERE "games"."id" = ? LIMIT 1[0m  [["id", 66]]
+  [1m[35mSQL (1.8ms)[0m  UPDATE "frames" SET "second_stroke" = 8 WHERE "frames"."game_id" = ? AND "frames"."frame_number" = 10  [["game_id", 66]]
+  [1m[36m (0.1ms)[0m  [1mbegin transaction[0m
+  [1m[35mSQL (0.2ms)[0m  UPDATE "games" SET "bowled_pins" = ?, "frame_stroke" = ?, "pins_left" = ?, "updated_at" = ? WHERE "games"."id" = 66  [["bowled_pins", 8], ["frame_stroke", 1], ["pins_left", 2], ["updated_at", "2015-02-23 05:50:43.167110"]]
+  [1m[36m (1.3ms)[0m  [1mcommit transaction[0m
+Redirected to http://localhost:3000/games
+Completed 302 Found in 7ms (ActiveRecord: 3.4ms)
+
+
+Started GET "/games" for 127.0.0.1 at 2015-02-23 00:50:43 -0500
+Processing by GamesController#index as HTML
+  [1m[35mGame Load (0.1ms)[0m  SELECT "games".* FROM "games"
+  Rendered games/index.html.erb within layouts/application (1.0ms)
+Completed 200 OK in 100ms (Views: 99.3ms | ActiveRecord: 0.1ms)
+
+
+Started GET "/assets/games.css?body=1" for 127.0.0.1 at 2015-02-23 00:50:43 -0500
+
+
+Started GET "/assets/frames.css?body=1" for 127.0.0.1 at 2015-02-23 00:50:43 -0500
+
+
+Started GET "/assets/scaffolds.css?body=1" for 127.0.0.1 at 2015-02-23 00:50:43 -0500
+
+
+Started GET "/assets/turbolinks.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:43 -0500
+
+
+Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:43 -0500
+
+
+Started GET "/assets/jquery.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:43 -0500
+
+
+Started GET "/assets/frames.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:43 -0500
+
+
+Started GET "/assets/application.css?body=1" for 127.0.0.1 at 2015-02-23 00:50:43 -0500
+
+
+Started GET "/assets/games.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:43 -0500
+
+
+Started GET "/assets/application.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:43 -0500
+
+
+Started PUT "/games/66/bowl" for 127.0.0.1 at 2015-02-23 00:50:43 -0500
+Processing by GamesController#bowl as HTML
+  Parameters: {"authenticity_token"=>"H7mT/JZvWqsStuk02KLZ31dDktJtrJsuTYflnOs/7qY=", "id"=>"66"}
+  [1m[36mGame Load (0.1ms)[0m  [1mSELECT  "games".* FROM "games"  WHERE "games"."id" = ? LIMIT 1[0m  [["id", 66]]
+  [1m[35mSQL (1.8ms)[0m  UPDATE "frames" SET "first_stroke" = 7 WHERE "frames"."game_id" = ? AND "frames"."frame_number" = 10  [["game_id", 66]]
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+  [1m[35mSQL (0.1ms)[0m  UPDATE "games" SET "bowled_pins" = ?, "frame_stroke" = ?, "pins_left" = ?, "updated_at" = ? WHERE "games"."id" = 66  [["bowled_pins", 7], ["frame_stroke", 2], ["pins_left", 3], ["updated_at", "2015-02-23 05:50:43.942889"]]
+  [1m[36m (1.4ms)[0m  [1mcommit transaction[0m
+Redirected to http://localhost:3000/games
+Completed 302 Found in 7ms (ActiveRecord: 3.5ms)
+
+
+Started GET "/games" for 127.0.0.1 at 2015-02-23 00:50:43 -0500
+Processing by GamesController#index as HTML
+  [1m[35mGame Load (0.2ms)[0m  SELECT "games".* FROM "games"
+  Rendered games/index.html.erb within layouts/application (1.5ms)
+Completed 200 OK in 40ms (Views: 39.2ms | ActiveRecord: 0.2ms)
+
+
+Started GET "/assets/frames.css?body=1" for 127.0.0.1 at 2015-02-23 00:50:44 -0500
+
+
+Started GET "/assets/games.css?body=1" for 127.0.0.1 at 2015-02-23 00:50:44 -0500
+
+
+Started GET "/assets/application.css?body=1" for 127.0.0.1 at 2015-02-23 00:50:44 -0500
+
+
+Started GET "/assets/scaffolds.css?body=1" for 127.0.0.1 at 2015-02-23 00:50:44 -0500
+
+
+Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:44 -0500
+
+
+Started GET "/assets/jquery.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:44 -0500
+
+
+Started GET "/assets/turbolinks.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:44 -0500
+
+
+Started GET "/assets/frames.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:44 -0500
+
+
+Started GET "/assets/games.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:44 -0500
+
+
+Started GET "/assets/application.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:44 -0500
+
+
+Started PUT "/games/66/bowl" for 127.0.0.1 at 2015-02-23 00:50:44 -0500
+Processing by GamesController#bowl as HTML
+  Parameters: {"authenticity_token"=>"H7mT/JZvWqsStuk02KLZ31dDktJtrJsuTYflnOs/7qY=", "id"=>"66"}
+  [1m[36mGame Load (0.1ms)[0m  [1mSELECT  "games".* FROM "games"  WHERE "games"."id" = ? LIMIT 1[0m  [["id", 66]]
+  [1m[35mSQL (1.9ms)[0m  UPDATE "frames" SET "second_stroke" = 1 WHERE "frames"."game_id" = ? AND "frames"."frame_number" = 10  [["game_id", 66]]
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+  [1m[35mSQL (0.2ms)[0m  UPDATE "games" SET "bowled_pins" = ?, "frame_stroke" = ?, "pins_left" = ?, "updated_at" = ? WHERE "games"."id" = 66  [["bowled_pins", 1], ["frame_stroke", 1], ["pins_left", 9], ["updated_at", "2015-02-23 05:50:44.736749"]]
+  [1m[36m (1.1ms)[0m  [1mcommit transaction[0m
+Redirected to http://localhost:3000/games
+Completed 302 Found in 7ms (ActiveRecord: 3.4ms)
+
+
+Started GET "/games" for 127.0.0.1 at 2015-02-23 00:50:44 -0500
+Processing by GamesController#index as HTML
+  [1m[35mGame Load (0.1ms)[0m  SELECT "games".* FROM "games"
+  Rendered games/index.html.erb within layouts/application (1.0ms)
+Completed 200 OK in 64ms (Views: 62.9ms | ActiveRecord: 0.1ms)
+
+
+Started GET "/assets/frames.css?body=1" for 127.0.0.1 at 2015-02-23 00:50:44 -0500
+
+
+Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:44 -0500
+
+
+Started GET "/assets/application.css?body=1" for 127.0.0.1 at 2015-02-23 00:50:44 -0500
+
+
+Started GET "/assets/scaffolds.css?body=1" for 127.0.0.1 at 2015-02-23 00:50:44 -0500
+
+
+Started GET "/assets/games.css?body=1" for 127.0.0.1 at 2015-02-23 00:50:44 -0500
+
+
+Started GET "/assets/jquery.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:44 -0500
+
+
+Started GET "/assets/turbolinks.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:44 -0500
+
+
+Started GET "/assets/frames.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:44 -0500
+
+
+Started GET "/assets/games.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:44 -0500
+
+
+Started GET "/assets/application.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:44 -0500
+
+
+Started PUT "/games/66/bowl" for 127.0.0.1 at 2015-02-23 00:50:45 -0500
+Processing by GamesController#bowl as HTML
+  Parameters: {"authenticity_token"=>"H7mT/JZvWqsStuk02KLZ31dDktJtrJsuTYflnOs/7qY=", "id"=>"66"}
+  [1m[36mGame Load (0.1ms)[0m  [1mSELECT  "games".* FROM "games"  WHERE "games"."id" = ? LIMIT 1[0m  [["id", 66]]
+  [1m[35mSQL (1.7ms)[0m  UPDATE "frames" SET "first_stroke" = 1 WHERE "frames"."game_id" = ? AND "frames"."frame_number" = 10  [["game_id", 66]]
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+  [1m[35mSQL (0.2ms)[0m  UPDATE "games" SET "frame_stroke" = ?, "updated_at" = ? WHERE "games"."id" = 66  [["frame_stroke", 2], ["updated_at", "2015-02-23 05:50:45.468863"]]
+  [1m[36m (1.3ms)[0m  [1mcommit transaction[0m
+Redirected to http://localhost:3000/games
+Completed 302 Found in 7ms (ActiveRecord: 3.4ms)
+
+
+Started GET "/games" for 127.0.0.1 at 2015-02-23 00:50:45 -0500
+Processing by GamesController#index as HTML
+  [1m[35mGame Load (0.2ms)[0m  SELECT "games".* FROM "games"
+  Rendered games/index.html.erb within layouts/application (1.2ms)
+Completed 200 OK in 38ms (Views: 37.4ms | ActiveRecord: 0.2ms)
+
+
+Started GET "/assets/games.css?body=1" for 127.0.0.1 at 2015-02-23 00:50:45 -0500
+
+
+Started GET "/assets/frames.css?body=1" for 127.0.0.1 at 2015-02-23 00:50:45 -0500
+
+
+Started GET "/assets/scaffolds.css?body=1" for 127.0.0.1 at 2015-02-23 00:50:45 -0500
+
+
+Started GET "/assets/application.css?body=1" for 127.0.0.1 at 2015-02-23 00:50:45 -0500
+
+
+Started GET "/assets/jquery.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:45 -0500
+
+
+Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:45 -0500
+
+
+Started GET "/assets/turbolinks.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:45 -0500
+
+
+Started GET "/assets/frames.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:45 -0500
+
+
+Started GET "/assets/games.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:45 -0500
+
+
+Started GET "/assets/application.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:45 -0500
+
+
+Started PUT "/games/66/bowl" for 127.0.0.1 at 2015-02-23 00:50:46 -0500
+Processing by GamesController#bowl as HTML
+  Parameters: {"authenticity_token"=>"H7mT/JZvWqsStuk02KLZ31dDktJtrJsuTYflnOs/7qY=", "id"=>"66"}
+  [1m[36mGame Load (0.1ms)[0m  [1mSELECT  "games".* FROM "games"  WHERE "games"."id" = ? LIMIT 1[0m  [["id", 66]]
+  [1m[35mSQL (1.8ms)[0m  UPDATE "frames" SET "second_stroke" = 6 WHERE "frames"."game_id" = ? AND "frames"."frame_number" = 10  [["game_id", 66]]
+  [1m[36m (0.1ms)[0m  [1mbegin transaction[0m
+  [1m[35mSQL (0.2ms)[0m  UPDATE "games" SET "bowled_pins" = ?, "frame_stroke" = ?, "pins_left" = ?, "updated_at" = ? WHERE "games"."id" = 66  [["bowled_pins", 6], ["frame_stroke", 1], ["pins_left", 4], ["updated_at", "2015-02-23 05:50:46.111156"]]
+  [1m[36m (1.2ms)[0m  [1mcommit transaction[0m
+Redirected to http://localhost:3000/games
+Completed 302 Found in 7ms (ActiveRecord: 3.3ms)
+
+
+Started GET "/games" for 127.0.0.1 at 2015-02-23 00:50:46 -0500
+Processing by GamesController#index as HTML
+  [1m[35mGame Load (0.1ms)[0m  SELECT "games".* FROM "games"
+  Rendered games/index.html.erb within layouts/application (1.0ms)
+Completed 200 OK in 62ms (Views: 61.5ms | ActiveRecord: 0.1ms)
+
+
+Started GET "/assets/frames.css?body=1" for 127.0.0.1 at 2015-02-23 00:50:46 -0500
+
+
+Started GET "/assets/games.css?body=1" for 127.0.0.1 at 2015-02-23 00:50:46 -0500
+
+
+Started GET "/assets/scaffolds.css?body=1" for 127.0.0.1 at 2015-02-23 00:50:46 -0500
+
+
+Started GET "/assets/jquery.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:46 -0500
+
+
+Started GET "/assets/turbolinks.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:46 -0500
+
+
+Started GET "/assets/frames.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:46 -0500
+
+
+Started GET "/assets/application.css?body=1" for 127.0.0.1 at 2015-02-23 00:50:46 -0500
+
+
+Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:46 -0500
+
+
+Started GET "/assets/games.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:46 -0500
+
+
+Started GET "/assets/application.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:46 -0500
+
+
+Started GET "/frames" for 127.0.0.1 at 2015-02-23 00:50:48 -0500
+Processing by FramesController#index as HTML
+  [1m[36mFrame Load (0.2ms)[0m  [1mSELECT "frames".* FROM "frames"[0m
+  Rendered frames/index.html.erb within layouts/application (8.6ms)
+Completed 200 OK in 47ms (Views: 45.6ms | ActiveRecord: 0.2ms)
+
+
+Started GET "/assets/scaffolds.css?body=1" for 127.0.0.1 at 2015-02-23 00:50:48 -0500
+
+
+Started GET "/assets/frames.css?body=1" for 127.0.0.1 at 2015-02-23 00:50:48 -0500
+
+
+Started GET "/assets/games.css?body=1" for 127.0.0.1 at 2015-02-23 00:50:48 -0500
+
+
+Started GET "/assets/jquery.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:48 -0500
+
+
+Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:48 -0500
+
+
+Started GET "/assets/application.css?body=1" for 127.0.0.1 at 2015-02-23 00:50:48 -0500
+
+
+Started GET "/assets/turbolinks.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:48 -0500
+
+
+Started GET "/assets/frames.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:48 -0500
+
+
+Started GET "/assets/games.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:48 -0500
+
+
+Started GET "/assets/application.js?body=1" for 127.0.0.1 at 2015-02-23 00:50:48 -0500
