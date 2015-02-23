@@ -116,7 +116,6 @@ class Game < ActiveRecord::Base
         else
           self.frames.where(frame_number: self.current_frame).update_all(extra_stroke: "/")
         end
-        incrementFrameCount
         endGame
       end
 
@@ -130,12 +129,10 @@ class Game < ActiveRecord::Base
         if isStrike?(self.current_frame)
         	self.frame_stroke = 3
         else
-        	incrementFrameCount
         	endGame
         end
       elsif self.frame_stroke == 3
         self.frames.where(frame_number: self.current_frame).update_all(extra_stroke: "-")
-        incrementFrameCount
         endGame
       end
     
@@ -172,7 +169,6 @@ class Game < ActiveRecord::Base
     		end
     	elsif self.current_frame == 10 && self.frame_stroke == 3
       	self.frames.where(frame_number: self.current_frame).update_all(extra_stroke: self.bowled_pins)
-      	incrementFrameCount
     		endGame
       end
     end
