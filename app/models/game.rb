@@ -33,7 +33,7 @@ class Game < ActiveRecord::Base
 
     # Handle second stroke for frame 10
     elsif self.frame_stroke == 2 && self.current_frame == 10
-      if isStrike?(self.current_frame)
+      if isLastTurnStrike?
       	self.bowled_pins = randomizePinCount( 0, 10 )
         self.pins_left = 10 - self.bowled_pins
       else
@@ -43,7 +43,7 @@ class Game < ActiveRecord::Base
 
   	# Handle third stroke for frame 10
 	  elsif self.frame_stroke == 3 && self.current_frame == 10
-      if isStrike?(self.current_frame) || isSpare?(self.current_frame)
+      if isLastTurnStrike? || isLastTurnSpare?
       	self.bowled_pins = randomizePinCount( 0, 10 )
         self.pins_left = 10 - self.bowled_pins
       else
@@ -180,30 +180,22 @@ class Game < ActiveRecord::Base
   end
 
   def isLastTurnStrike?
-    isStrike?(self.current_frame-1)
-  end
-
-  def isLastTurnSpare?
-    isSpare?(self.current_frame-1)
-  end
-
-  def isStrike?(frame_to_check)
   	if self.frame_stroke == 2 && self.current_frame == 10
-  		frame = self.getFrame(frame_to_check)
+  		frame = self.getFrame(self.current_frame-1)
   		if frame.first_stroke = "X"
   			return true
   		else
   			return false
   		end
   	elsif self.frame_stroke == 3 && self.current_frame == 10
-  		frame = self.getFrame(frame_to_check)
+  		frame = self.getFrame(self.current_frame)
   		if frame.second_stroke = "X"
   			return true
   		else
   			return false
   		end
   	elsif self.frame_stroke == 1
-  		frame = self.getFrame(frame_to_check - 1)
+  		frame = self.getFrame(self.current_frame-1)
   		if frame.first_stroke ="X"
   			return true
   		else
@@ -212,22 +204,33 @@ class Game < ActiveRecord::Base
   	end
   end
 
-  def isSpare?(frame_to_check)
+  def isLastTurnSpare?
     if self.frame_stroke == 3 && self.current_frame == 10
-  		frame = self.getFrame(frame_to_check)
+  		frame = self.getFrame(self.current_frame)
   		if frame.second_stroke = "/"
   			return true
   		else
   			return false
   		end
   	elsif self.frame_stroke == 1
-  		frame = self.getFrame(frame_to_check - 1)
+  		frame = self.getFrame(self.current_frame-1)
   		if frame.second_stroke ="/"
   			return true
   		else
   			return false
   		end
   	end
+  end
+
+  def isStrike?(frame_to_check)
+    self.frames.where(frame_number: frame_to_check, first_stroke: "X") ||
+    self.frames.where(frame_number: frame_to_check, second_stroke: "X") ||
+    self.frames.where(frame_number: frame_to_check, extra_stroke: "X")
+  end
+
+  def isSpare?(frame_to_check)
+    self.frames.where(frame_number: frame_to_check, second_stroke: "/") || 
+    self.frames.where(frame_number: frame_to_check, extra_stroke: "/")
   end
 
   def calculateTotalScore
