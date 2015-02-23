@@ -33,10 +33,8 @@ class GamesController < ApplicationController
     @game = Game.new(game_params)
 
     respond_to do |format|
-      if @game.save
-        @frames = @game.frames
-        new_frame = Frame.create(game_id: @game.id, frame_number: @game.current_frame)
-        @frames << new_frame 
+      if @game.save 
+        @frame = @game.frames.create(frame_number: @game.current_frame)
 
         format.html { redirect_to @game, notice: 'Game was successfully created.' }
         format.json { render :show, status: :created, location: @game }
@@ -80,7 +78,8 @@ class GamesController < ApplicationController
     if @game.frame_stroke == 2
       @game.resetPins
       @game.incrementFrameCount
-      @frame = @game.frames.create(frame_number: @game.current_frame)
+      @frame = Frame.create(frame_number: @game.current_frame)
+      @frames << @frame
     end
 
     # Handle first stroke for all frames
@@ -163,52 +162,50 @@ class GamesController < ApplicationController
     end
 
     def markScorecard
-      @frames = @goal.frames.where(frame_number: current_frame)
-
       # Handle Strikes and Spares for frames 1 through 9
       if @game.current_frame < 10 && @pins_left == 0
         if @game.frame_stroke == 1
-          @game.frames.first_stroke = "X"
+          @frame.first_stroke = "X"
         elsif @frame_stroke == 2 
-          @game.frames.second_stroke = "/"
+          @frame.second_stroke = "/"
         end
       
       # Handle Strikes and Spares for frame 10
       elsif @game.current_frame == 10 && @pins_left == 0
         if @game.frame_stroke == 1 
-          @game.frames.first_stroke = "X"
+          @frame.first_stroke = "X"
         elsif @frame_stroke == 2
           if isLastTurnStrike
-            @game.frames.second_stroke = "X"
+            @frame.second_stroke = "X"
           else
-            @game.frames.second_stroke = "/"
+            @frame.second_stroke = "/"
           end
         elsif @game.frame_stroke == 3
           if isLastTurnStrike || isLastTurnSpare
-            @game.frames.extra_stroke = "X"
+            @frame.extra_stroke = "X"
           else
-            @@game.frames.extra_stroke = "/"
+            @frame.extra_stroke = "/"
           end
         end
       
       # Handle Zero pins bowled
       elsif @bowled_pins == 0
         if @game.frame_stroke == 1
-          @game.frames.first_stroke = "-"
+          @frame.first_stroke = "-"
         elsif @game.frame_stroke == 2
-          @game.frames.second_stroke = "-"
+          @frame.second_stroke = "-"
         elsif @game.frame_stroke == 3
-          @game.frames.extra_stroke = "-"
+          @frame.extra_stroke = "-"
         end
       
       # Handle all other strokes
       else
         if @game.frame_stroke == 1 
-          @game.frames.first_stroke = @bowled_pins.to_s
+          @frame.first_stroke = @bowled_pins.to_s
         elsif @game.frame_stroke == 2
-          @game.frames.second_stroke = @bowled_pins.to_s
+          @frame.second_stroke = @bowled_pins.to_s
         else
-          @game.frames.extra_stroke = @bowled_pins.to_s
+          @frame.extra_stroke = @bowled_pins.to_s
         end
       end
     end
