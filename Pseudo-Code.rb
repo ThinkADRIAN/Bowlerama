@@ -2,11 +2,11 @@ Pseudo-Code
 
 Current Feature:
 
-	Bowl Action for Games Controller
+	Calculate Frame Score
 
 Upcoming Features:
 
-	Bowl Button
+	Calculate Total Score
 	Reset Game Button
 	Show Scorecard (Use Tables)
 
@@ -17,6 +17,11 @@ Current Challenge:
 Upcoming Challenges:
 
 	Table Formatting of Scorecard
+
+Resolved:
+
+	Bowl Button
+	Bowl Action for Games Controller
 
 ----------
 
