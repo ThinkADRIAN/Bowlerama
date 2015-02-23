@@ -60,7 +60,7 @@ class Game < ActiveRecord::Base
   end
 
   def resetPinsIfNecessary
-    if ( self.frame_stroke == 1 && self.current_frame < 10 ) || isLastTurnStrike? || isLastTurnSpare? || isStrike?(10) || isSpare?(10)
+    if ( self.frame_stroke == 1 && self.current_frame < 10 ) || isLastTurnStrike? || isLastTurnSpare?
       @pins_left = 10
       @bowled_pins = 0
     end
