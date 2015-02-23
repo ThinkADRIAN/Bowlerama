@@ -84,7 +84,7 @@ class GamesController < ApplicationController
 
     # Handle second and third stroke for frame 10  
     elsif @game.frame_stroke != 1 && @game.current_frame == 10
-      if @game.isLastTurnStrike()  || @game.isLastTurnSpare()
+      if isLastTurnStrike()  || isLastTurnSpare()
         @game.bowled_pins = randomizePinCount( 0, 10 )
         @game.pins_left = 10 - @game.bowled_pins
       else
