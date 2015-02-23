@@ -59,11 +59,6 @@ class Game < ActiveRecord::Base
     end
   end
 
-  def createNewFrame
-      frame = self.frames.create(frame_number: self.current_frame)
-      self.frames << frame
-  end
-
   def resetPinsIfNecessary
     if ( self.frame_stroke == 1 && self.current_frame < 10 ) || isLastTurnStrike? || isLastTurnSpare? || isStrike?(10) || isSpare?(10)
       @pins_left = 10
