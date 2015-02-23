@@ -2,6 +2,22 @@ class Game < ActiveRecord::Base
 	has_many :frames, :dependent => :destroy
 	accepts_nested_attributes_for :frames
 
+	after_create :init
+
+  def init
+  	i = 1
+    10.times { 
+    	frame = Frame.new
+    	frame.frame_number = i
+    	frame.frame_score = 0
+    	frame.save
+    	self.frames << frame
+    	i += 1
+    }
+
+    self.save
+  end
+
 	def rollBall
 		self.resetPinsIfNecessary
 
@@ -30,9 +46,12 @@ class Game < ActiveRecord::Base
 	def incrementFrameCount
     if self.current_frame < 10
       self.current_frame += 1
+    end
+  end
+
+  def createNewFrame
       frame = self.frames.create(frame_number: self.current_frame)
       self.frames << frame
-    end
   end
 
   def resetPinsIfNecessary
@@ -148,5 +167,13 @@ class Game < ActiveRecord::Base
 
   def isGameOver
     self.frame_stroke == -1
+  end
+
+  def getFrame(frame_number)
+  	self.frames.each { |frame| 
+  		if frame.frame_number == frame_number
+  			return frame
+  		end
+  	}
   end
 end

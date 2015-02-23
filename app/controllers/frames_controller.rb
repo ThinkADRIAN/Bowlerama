@@ -15,6 +15,7 @@ class FramesController < ApplicationController
   # GET /frames/new
   def new
     @frame = Frame.new
+    @frame.frame_score = 0
   end
 
   # GET /frames/1/edit
@@ -29,7 +30,7 @@ class FramesController < ApplicationController
     #@frame.first_stroke = ""
     #@frame.second_stroke = ""
     #@frame.extra_stroke = ""
-    #@frame.frame_score = @frame.getLastScore
+    #@frame.frame_score = 0
     #@frame.frame_number = 1
 
     respond_to do |format|

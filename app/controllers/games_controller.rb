@@ -34,8 +34,6 @@ class GamesController < ApplicationController
 
     respond_to do |format|
       if @game.save 
-        @frame = @game.frames.create(frame_number: @game.current_frame)
-
         format.html { redirect_to @game, notice: 'Game was successfully created.' }
         format.json { render :show, status: :created, location: @game }
       else
