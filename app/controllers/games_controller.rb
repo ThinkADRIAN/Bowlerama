@@ -165,47 +165,47 @@ class GamesController < ApplicationController
       # Handle Strikes and Spares for frames 1 through 9
       if @game.current_frame < 10 && @pins_left == 0
         if @game.frame_stroke == 1
-          @frame.first_stroke = "X"
-        elsif @frame_stroke == 2 
-          @frame.second_stroke = "/"
+          @game.frames.where(frame_number: @game.current_frame).update_all(first_stroke: "X")
+        elsif @frame_stroke == 2
+          @game.frames.where(frame_number: @game.current_frame).update_all(second_stroke: "/")
         end
       
       # Handle Strikes and Spares for frame 10
       elsif @game.current_frame == 10 && @pins_left == 0
-        if @game.frame_stroke == 1 
-          @frame.first_stroke = "X"
+        if @game.frame_stroke == 1
+          @game.frames.where(frame_number: @game.current_frame).update_all(first_stroke: "X")
         elsif @frame_stroke == 2
           if isLastTurnStrike
-            @frame.second_stroke = "X"
+            @game.frames.where(frame_number: @game.current_frame).update_all(second_stroke: "X")
           else
-            @frame.second_stroke = "/"
+            @game.frames.where(frame_number: @game.current_frame).update_all(second_stroke: "/")
           end
         elsif @game.frame_stroke == 3
           if isLastTurnStrike || isLastTurnSpare
-            @frame.extra_stroke = "X"
+            @game.frames.where(frame_number: @game.current_frame).update_all(extra_stroke: "X")
           else
-            @frame.extra_stroke = "/"
+            @game.frames.where(frame_number: @game.current_frame).update_all(extra_stroke: "/")
           end
         end
       
       # Handle Zero pins bowled
       elsif @bowled_pins == 0
         if @game.frame_stroke == 1
-          @frame.first_stroke = "-"
+          @game.frames.where(frame_number: @game.current_frame).update_all(first_stroke: "-")
         elsif @game.frame_stroke == 2
-          @frame.second_stroke = "-"
+          @game.frames.where(frame_number: @game.current_frame).update_all(second_stroke: "-")
         elsif @game.frame_stroke == 3
-          @frame.extra_stroke = "-"
+          @game.frames.where(frame_number: @game.current_frame).update_all(extra_stroke: "-")
         end
       
       # Handle all other strokes
       else
         if @game.frame_stroke == 1 
-          @frame.first_stroke = @bowled_pins.to_s
+          @game.frames.where(frame_number: @game.current_frame).update_all(first_stroke: @bowled_pins.to_s)
         elsif @game.frame_stroke == 2
-          @frame.second_stroke = @bowled_pins.to_s
+          @game.frames.where(frame_number: @game.current_frame).update_all(second_stroke: @bowled_pins.to_s)
         else
-          @frame.extra_stroke = @bowled_pins.to_s
+          @game.frames.where(frame_number: @game.current_frame).update_all(extra_stroke: @bowled_pins.to_s)
         end
       end
     end

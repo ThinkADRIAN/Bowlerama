@@ -7644,3 +7644,197 @@ Started GET "/assets/application.js?body=1" for 127.0.0.1 at 2015-02-22 22:04:02
 
 
 Started GET "/assets/games.js?body=1" for 127.0.0.1 at 2015-02-22 22:04:02 -0500
+
+
+Started GET "/games/new" for 127.0.0.1 at 2015-02-22 22:07:56 -0500
+Processing by GamesController#new as HTML
+  Rendered games/_form.html.erb (2.1ms)
+  Rendered games/new.html.erb within layouts/application (2.9ms)
+Completed 200 OK in 45ms (Views: 38.2ms | ActiveRecord: 0.4ms)
+
+
+Started POST "/games" for 127.0.0.1 at 2015-02-22 22:07:57 -0500
+Processing by GamesController#create as HTML
+  Parameters: {"utf8"=>"✓", "authenticity_token"=>"H7mT/JZvWqsStuk02KLZ31dDktJtrJsuTYflnOs/7qY=", "game"=>{"current_frame"=>"1", "frame_stroke"=>"1", "total_score"=>"0"}, "commit"=>"Create Game"}
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36mSQL (0.7ms)[0m  [1mINSERT INTO "games" ("created_at", "current_frame", "frame_stroke", "total_score", "updated_at") VALUES (?, ?, ?, ?, ?)[0m  [["created_at", "2015-02-23 03:07:57.594249"], ["current_frame", 1], ["frame_stroke", 1], ["total_score", 0], ["updated_at", "2015-02-23 03:07:57.594249"]]
+  [1m[35m (1.5ms)[0m  commit transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "frames" ("created_at", "frame_number", "game_id", "updated_at") VALUES (?, ?, ?, ?)  [["created_at", "2015-02-23 03:07:57.607729"], ["frame_number", 1], ["game_id", 32], ["updated_at", "2015-02-23 03:07:57.607729"]]
+  [1m[36m (1.4ms)[0m  [1mcommit transaction[0m
+Redirected to http://localhost:3000/games/32
+Completed 302 Found in 18ms (ActiveRecord: 4.3ms)
+
+
+Started GET "/games/32" for 127.0.0.1 at 2015-02-22 22:07:57 -0500
+Processing by GamesController#show as HTML
+  Parameters: {"id"=>"32"}
+  [1m[35mGame Load (0.1ms)[0m  SELECT  "games".* FROM "games"  WHERE "games"."id" = ? LIMIT 1  [["id", 32]]
+  Rendered games/show.html.erb within layouts/application (0.4ms)
+Completed 200 OK in 76ms (Views: 74.9ms | ActiveRecord: 0.1ms)
+
+
+Started GET "/assets/frames.css?body=1" for 127.0.0.1 at 2015-02-22 22:07:57 -0500
+
+
+Started GET "/assets/jquery.js?body=1" for 127.0.0.1 at 2015-02-22 22:07:57 -0500
+
+
+Started GET "/assets/games.css?body=1" for 127.0.0.1 at 2015-02-22 22:07:57 -0500
+
+
+Started GET "/assets/application.css?body=1" for 127.0.0.1 at 2015-02-22 22:07:57 -0500
+
+
+Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at 2015-02-22 22:07:57 -0500
+
+
+Started GET "/assets/scaffolds.css?body=1" for 127.0.0.1 at 2015-02-22 22:07:57 -0500
+
+
+Started GET "/assets/turbolinks.js?body=1" for 127.0.0.1 at 2015-02-22 22:07:57 -0500
+
+
+Started GET "/assets/frames.js?body=1" for 127.0.0.1 at 2015-02-22 22:07:57 -0500
+
+
+Started GET "/assets/games.js?body=1" for 127.0.0.1 at 2015-02-22 22:07:57 -0500
+
+
+Started GET "/assets/application.js?body=1" for 127.0.0.1 at 2015-02-22 22:07:57 -0500
+
+
+Started GET "/games" for 127.0.0.1 at 2015-02-22 22:07:59 -0500
+Processing by GamesController#index as HTML
+  [1m[36mGame Load (0.1ms)[0m  [1mSELECT "games".* FROM "games"[0m
+  Rendered games/index.html.erb within layouts/application (1.2ms)
+Completed 200 OK in 39ms (Views: 37.8ms | ActiveRecord: 0.1ms)
+
+
+Started PUT "/games/32/bowl" for 127.0.0.1 at 2015-02-22 22:08:00 -0500
+Processing by GamesController#bowl as HTML
+  Parameters: {"authenticity_token"=>"H7mT/JZvWqsStuk02KLZ31dDktJtrJsuTYflnOs/7qY=", "id"=>"32"}
+  [1m[35mGame Load (0.1ms)[0m  SELECT  "games".* FROM "games"  WHERE "games"."id" = ? LIMIT 1  [["id", 32]]
+Completed 500 Internal Server Error in 1ms
+
+NoMethodError (undefined method `first_stroke=' for nil:NilClass):
+  app/controllers/games_controller.rb:194:in `markScorecard'
+  app/controllers/games_controller.rb:107:in `bowl'
+
+
+  Rendered /Users/adrianbrucecunanan/.rvm/gems/ruby-2.0.0-p481/gems/actionpack-4.1.6/lib/action_dispatch/middleware/templates/rescues/_source.erb (0.5ms)
+  Rendered /Users/adrianbrucecunanan/.rvm/gems/ruby-2.0.0-p481/gems/actionpack-4.1.6/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (1.0ms)
+  Rendered /Users/adrianbrucecunanan/.rvm/gems/ruby-2.0.0-p481/gems/actionpack-4.1.6/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (0.8ms)
+  Rendered /Users/adrianbrucecunanan/.rvm/gems/ruby-2.0.0-p481/gems/actionpack-4.1.6/lib/action_dispatch/middleware/templates/rescues/diagnostics.erb within rescues/layout (12.1ms)
+
+
+Started PUT "/games/32/bowl" for 127.0.0.1 at 2015-02-22 22:08:04 -0500
+Processing by GamesController#bowl as HTML
+  Parameters: {"authenticity_token"=>"H7mT/JZvWqsStuk02KLZ31dDktJtrJsuTYflnOs/7qY=", "id"=>"32"}
+  [1m[36mGame Load (0.1ms)[0m  [1mSELECT  "games".* FROM "games"  WHERE "games"."id" = ? LIMIT 1[0m  [["id", 32]]
+  [1m[35mFrame Load (0.1ms)[0m  SELECT "frames".* FROM "frames"  WHERE "frames"."game_id" = ?  [["game_id", 32]]
+Completed 500 Internal Server Error in 3ms
+
+NoMethodError (undefined method `update_attribute' for #<Frame::ActiveRecord_Associations_CollectionProxy:0x007fc42e2b7d08>):
+  app/controllers/games_controller.rb:204:in `markScorecard'
+  app/controllers/games_controller.rb:107:in `bowl'
+
+
+  Rendered /Users/adrianbrucecunanan/.rvm/gems/ruby-2.0.0-p481/gems/actionpack-4.1.6/lib/action_dispatch/middleware/templates/rescues/_source.erb (0.6ms)
+  Rendered /Users/adrianbrucecunanan/.rvm/gems/ruby-2.0.0-p481/gems/actionpack-4.1.6/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (0.9ms)
+  Rendered /Users/adrianbrucecunanan/.rvm/gems/ruby-2.0.0-p481/gems/actionpack-4.1.6/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (0.7ms)
+  Rendered /Users/adrianbrucecunanan/.rvm/gems/ruby-2.0.0-p481/gems/actionpack-4.1.6/lib/action_dispatch/middleware/templates/rescues/diagnostics.erb within rescues/layout (12.7ms)
+
+
+Started PUT "/games/32/bowl" for 127.0.0.1 at 2015-02-22 22:08:19 -0500
+Processing by GamesController#bowl as HTML
+  Parameters: {"authenticity_token"=>"H7mT/JZvWqsStuk02KLZ31dDktJtrJsuTYflnOs/7qY=", "id"=>"32"}
+  [1m[36mGame Load (0.1ms)[0m  [1mSELECT  "games".* FROM "games"  WHERE "games"."id" = ? LIMIT 1[0m  [["id", 32]]
+  [1m[35mFrame Load (0.1ms)[0m  SELECT  "frames".* FROM "frames"  WHERE "frames"."game_id" = ? AND "frames"."id" = ? LIMIT 1  [["game_id", 32], ["id", "first_stroke"]]
+Completed 404 Not Found in 11ms
+
+ActiveRecord::RecordNotFound (Couldn't find Frame with 'id'=first_stroke [WHERE "frames"."game_id" = ?]):
+  app/controllers/games_controller.rb:204:in `markScorecard'
+  app/controllers/games_controller.rb:107:in `bowl'
+
+
+  Rendered /Users/adrianbrucecunanan/.rvm/gems/ruby-2.0.0-p481/gems/actionpack-4.1.6/lib/action_dispatch/middleware/templates/rescues/_source.erb (0.5ms)
+  Rendered /Users/adrianbrucecunanan/.rvm/gems/ruby-2.0.0-p481/gems/actionpack-4.1.6/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (0.8ms)
+  Rendered /Users/adrianbrucecunanan/.rvm/gems/ruby-2.0.0-p481/gems/actionpack-4.1.6/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (0.9ms)
+  Rendered /Users/adrianbrucecunanan/.rvm/gems/ruby-2.0.0-p481/gems/actionpack-4.1.6/lib/action_dispatch/middleware/templates/rescues/diagnostics.erb within rescues/layout (12.8ms)
+
+
+Started PUT "/games/32/bowl" for 127.0.0.1 at 2015-02-22 22:10:33 -0500
+Processing by GamesController#bowl as HTML
+  Parameters: {"authenticity_token"=>"H7mT/JZvWqsStuk02KLZ31dDktJtrJsuTYflnOs/7qY=", "id"=>"32"}
+  [1m[36mGame Load (0.1ms)[0m  [1mSELECT  "games".* FROM "games"  WHERE "games"."id" = ? LIMIT 1[0m  [["id", 32]]
+  [1m[35mSQL (1.8ms)[0m  UPDATE "frames" SET "first_stroke" = '6' WHERE "frames"."game_id" = ? AND "frames"."frame_number" = 1  [["game_id", 32]]
+Completed 400 Bad Request in 12ms
+
+ActionController::ParameterMissing (param is missing or the value is empty: game):
+  app/controllers/games_controller.rb:136:in `game_params'
+  app/controllers/games_controller.rb:110:in `block in bowl'
+  app/controllers/games_controller.rb:109:in `bowl'
+
+
+  Rendered /Users/adrianbrucecunanan/.rvm/gems/ruby-2.0.0-p481/gems/actionpack-4.1.6/lib/action_dispatch/middleware/templates/rescues/_source.erb (0.5ms)
+  Rendered /Users/adrianbrucecunanan/.rvm/gems/ruby-2.0.0-p481/gems/actionpack-4.1.6/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (0.8ms)
+  Rendered /Users/adrianbrucecunanan/.rvm/gems/ruby-2.0.0-p481/gems/actionpack-4.1.6/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (0.8ms)
+  Rendered /Users/adrianbrucecunanan/.rvm/gems/ruby-2.0.0-p481/gems/actionpack-4.1.6/lib/action_dispatch/middleware/templates/rescues/diagnostics.erb within rescues/layout (12.2ms)
+
+
+Started PUT "/games/32/bowl" for 127.0.0.1 at 2015-02-22 22:10:42 -0500
+Processing by GamesController#bowl as HTML
+  Parameters: {"authenticity_token"=>"H7mT/JZvWqsStuk02KLZ31dDktJtrJsuTYflnOs/7qY=", "id"=>"32"}
+  [1m[36mGame Load (0.1ms)[0m  [1mSELECT  "games".* FROM "games"  WHERE "games"."id" = ? LIMIT 1[0m  [["id", 32]]
+  [1m[35mSQL (1.7ms)[0m  UPDATE "frames" SET "first_stroke" = '6' WHERE "frames"."game_id" = ? AND "frames"."frame_number" = 1  [["game_id", 32]]
+Completed 400 Bad Request in 4ms
+
+ActionController::ParameterMissing (param is missing or the value is empty: game):
+  app/controllers/games_controller.rb:136:in `game_params'
+  app/controllers/games_controller.rb:110:in `block in bowl'
+  app/controllers/games_controller.rb:109:in `bowl'
+
+
+  Rendered /Users/adrianbrucecunanan/.rvm/gems/ruby-2.0.0-p481/gems/actionpack-4.1.6/lib/action_dispatch/middleware/templates/rescues/_source.erb (0.5ms)
+  Rendered /Users/adrianbrucecunanan/.rvm/gems/ruby-2.0.0-p481/gems/actionpack-4.1.6/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (0.8ms)
+  Rendered /Users/adrianbrucecunanan/.rvm/gems/ruby-2.0.0-p481/gems/actionpack-4.1.6/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (0.8ms)
+  Rendered /Users/adrianbrucecunanan/.rvm/gems/ruby-2.0.0-p481/gems/actionpack-4.1.6/lib/action_dispatch/middleware/templates/rescues/diagnostics.erb within rescues/layout (12.7ms)
+
+
+Started GET "/games/32/frames" for 127.0.0.1 at 2015-02-22 22:11:08 -0500
+Processing by FramesController#index as HTML
+  Parameters: {"game_id"=>"32"}
+  [1m[36mFrame Load (0.2ms)[0m  [1mSELECT "frames".* FROM "frames"[0m
+  Rendered frames/index.html.erb within layouts/application (6.6ms)
+Completed 200 OK in 47ms (Views: 46.0ms | ActiveRecord: 0.2ms)
+
+
+Started GET "/assets/frames.css?body=1" for 127.0.0.1 at 2015-02-22 22:11:08 -0500
+
+
+Started GET "/assets/games.css?body=1" for 127.0.0.1 at 2015-02-22 22:11:08 -0500
+
+
+Started GET "/assets/jquery.js?body=1" for 127.0.0.1 at 2015-02-22 22:11:08 -0500
+
+
+Started GET "/assets/scaffolds.css?body=1" for 127.0.0.1 at 2015-02-22 22:11:08 -0500
+
+
+Started GET "/assets/application.css?body=1" for 127.0.0.1 at 2015-02-22 22:11:08 -0500
+
+
+Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at 2015-02-22 22:11:08 -0500
+
+
+Started GET "/assets/frames.js?body=1" for 127.0.0.1 at 2015-02-22 22:11:08 -0500
+
+
+Started GET "/assets/games.js?body=1" for 127.0.0.1 at 2015-02-22 22:11:08 -0500
+
+
+Started GET "/assets/application.js?body=1" for 127.0.0.1 at 2015-02-22 22:11:08 -0500
+
+
+Started GET "/assets/turbolinks.js?body=1" for 127.0.0.1 at 2015-02-22 22:11:08 -0500
