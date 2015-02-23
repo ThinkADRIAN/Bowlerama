@@ -86,7 +86,7 @@ class GamesController < ApplicationController
 
       # Handle second and third stroke for frame 10  
       elsif @game.frame_stroke != 1 && @game.current_frame == 10
-        if isLastTurnStrike()  || isLastTurnSpare()
+        if isLastTurnStrike?()  || isLastTurnSpare?()
           @game.bowled_pins = randomizePinCount( 0, 10 )
           @game.pins_left = 10 - @game.bowled_pins
         else
@@ -135,7 +135,7 @@ class GamesController < ApplicationController
     end
 
     def resetPinsIfNecessary
-      if ( @game.frame_stroke == 1 && @game.current_frame < 10 ) || isLastTurnStrike || isLastTurnSpare
+      if ( @game.frame_stroke == 1 && @game.current_frame < 10 ) || isLastTurnStrike? || isLastTurnSpare?
         @pins_left = 10
         @bowled_pins = 0
       end
@@ -181,14 +181,14 @@ class GamesController < ApplicationController
           @game.frames.where(frame_number: @game.current_frame).update_all(first_stroke: "X")
           incrementFrameCount
         elsif @game.frame_stroke == 2
-          if isLastTurnStrike
+          if isLastTurnStrike?
             @game.frames.where(frame_number: @game.current_frame).update_all(second_stroke: "X")
           else
             @game.frames.where(frame_number: @game.current_frame).update_all(second_stroke: "/")
           end
           endGame
         elsif @game.frame_stroke == 3
-          if isLastTurnStrike || isLastTurnSpare
+          if isLastTurnStrike? || isLastTurnSpare?
             @game.frames.where(frame_number: @game.current_frame).update_all(extra_stroke: "X")
           else
             @game.frames.where(frame_number: @game.current_frame).update_all(extra_stroke: "/")
@@ -227,13 +227,22 @@ class GamesController < ApplicationController
       end
     end
 
-    def isLastTurnStrike
-      @game.frames.where(frame_number: @game.current_frame-1, first_stroke: "X") ||
-      @game.frames.where(frame_number: @game.current_frame-1, second_stroke: "X")
+    def isLastTurnStrike?
+      isStrike?(@game.current_frame-1)
     end
 
-    def isLastTurnSpare
-      @game.frames.where(frame_number: @game.current_frame-1, second_stroke: "/")
+    def isLastTurnSpare?
+      isSpare?(@game.current_frame-1)
+    end
+
+    def isStrike?(frame_to_check)
+      @game.frames.where(frame_number: frame_to_check, first_stroke: "X") ||
+      @game.frames.where(frame_number: frame_to_check, second_stroke: "X")
+    end
+
+    def isSpare?(frame_to_check)
+      @game.frames.where(frame_number: frame_to_check, second_stroke: "/") || 
+      @game.frames.where(frame_number: frame_to_check, extra_stroke: "/")
     end
 
     def calculateTotalScore
