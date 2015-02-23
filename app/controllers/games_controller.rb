@@ -76,10 +76,9 @@ class GamesController < ApplicationController
 
     # Create new frame if necessary
     if @game.frame_stroke == 2
-      @game.resetPins
-      @game.incrementFrameCount
-      @frame = Frame.create(frame_number: @game.current_frame)
-      @frames << @frame
+      resetPinsIfNecessary
+      incrementFrameCount
+      @frame = @game.frames.create(frame_number: @game.current_frame)
     end
 
     # Handle first stroke for all frames
@@ -106,8 +105,10 @@ class GamesController < ApplicationController
 
     markScorecard
 
+    advanceFrameStroke
+
     respond_to do |format|
-      if @game.update(game_params)
+      if @game.save
         format.html { redirect_to games_url, notice: 'Game was successfully updated.' }
         format.json { render :show, status: :ok, location: games_url }
       else
@@ -155,9 +156,9 @@ class GamesController < ApplicationController
 
     def advanceFrameStroke
       if @game.frame_stroke == 1
-        @game.frame_stroke == 2
+        @game.frame_stroke = 2
       else
-        @game.frame_stroke == 1
+        @game.frame_stroke = 1
       end
     end
 
@@ -201,11 +202,11 @@ class GamesController < ApplicationController
       # Handle all other strokes
       else
         if @game.frame_stroke == 1 
-          @game.frames.where(frame_number: @game.current_frame).update_all(first_stroke: @bowled_pins.to_s)
+          @game.frames.where(frame_number: @game.current_frame).update_all(first_stroke: @bowled_pins)
         elsif @game.frame_stroke == 2
-          @game.frames.where(frame_number: @game.current_frame).update_all(second_stroke: @bowled_pins.to_s)
+          @game.frames.where(frame_number: @game.current_frame).update_all(second_stroke: @bowled_pins)
         else
-          @game.frames.where(frame_number: @game.current_frame).update_all(extra_stroke: @bowled_pins.to_s)
+          @game.frames.where(frame_number: @game.current_frame).update_all(extra_stroke: @bowled_pins)
         end
       end
     end
