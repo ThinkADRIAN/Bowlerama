@@ -73,6 +73,8 @@ class Game < ActiveRecord::Base
   def advanceFrameStroke
     if self.frame_stroke == 1
       self.frame_stroke = 2
+    elsif self.frame_number == 2 && self.current_frame == 10 
+    	self.frame_stroke = 3
     else
       self.frame_stroke = 1
     end
@@ -104,7 +106,7 @@ class Game < ActiveRecord::Base
         else
           self.frames.where(frame_number: self.current_frame).update_all(second_stroke: "/")
         end
-        self.frame_stroke = 3
+        advanceFrameStroke
       elsif self.frame_stroke == 3
         if isStrike?(self.current_frame)
           self.frames.where(frame_number: self.current_frame).update_all(extra_stroke: "X")
@@ -122,7 +124,7 @@ class Game < ActiveRecord::Base
       elsif self.frame_stroke == 2
         self.frames.where(frame_number: self.current_frame).update_all(second_stroke: "-")
         if isStrike?(self.current_frame)
-        	self.frame_stroke = 3
+        	advanceFrameStroke
         else
         	endGame
         end
@@ -157,7 +159,7 @@ class Game < ActiveRecord::Base
       elsif self.current_frame == 10 && self.frame_stroke == 2
       	self.frames.where(frame_number: self.current_frame).update_all(second_stroke: self.bowled_pins)
     		if isStrike?(self.current_frame)
-    			self.frame_stroke = 3
+    			advanceFrameStroke
     		else
     			incrementFrameCount
     			endGame
