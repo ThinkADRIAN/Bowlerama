@@ -31,14 +31,24 @@ class Game < ActiveRecord::Base
       self.bowled_pins = randomizePinCount( 0, self.pins_left )
       self.pins_left = self.pins_left - self.bowled_pins
 
-    # Handle second and third stroke for frame 10  
-    elsif self.frame_stroke != 1 && self.current_frame == 10
-      if isLastTurnStrike?()  || isLastTurnSpare?()
-        self.bowled_pins = randomizePinCount( 0, 10 )
+    # Handle second stroke for frame 10
+    elsif self.frame_stroke == 2 && self.current_frame == 10
+      if isStrike?(self.current_frame)
+      	self.bowled_pins = randomizePinCount( 0, 10 )
         self.pins_left = 10 - self.bowled_pins
       else
-        self.bowled_pins = randomizePinCount( 0, 10 )
+        self.bowled_pins = randomizePinCount( 0, self.pins_left )
+        self.pins_left = self.pins_left - self.bowled_pins
+      end
+
+  	# Handle third stroke for frame 10
+	  elsif self.frame_stroke == 3 && self.current_frame == 10
+      if isStrike?(self.current_frame) || isSpare?(self.current_frame)
+      	self.bowled_pins = randomizePinCount( 0, 10 )
         self.pins_left = 10 - self.bowled_pins
+      else
+        self.bowled_pins = randomizePinCount( 0, self.pins_left )
+        self.pins_left = self.pins_left - self.bowled_pins
       end
     end
 	end
@@ -55,7 +65,7 @@ class Game < ActiveRecord::Base
   end
 
   def resetPinsIfNecessary
-    if ( self.frame_stroke == 1 && self.current_frame < 10 ) || isLastTurnStrike? || isLastTurnSpare?
+    if ( self.frame_stroke == 1 && self.current_frame < 10 ) || isLastTurnStrike? || isLastTurnSpare? || isStrike?(10) || isSpare?(10)
       @pins_left = 10
       @bowled_pins = 0
     end
@@ -94,18 +104,19 @@ class Game < ActiveRecord::Base
         self.frames.where(frame_number: self.current_frame).update_all(first_stroke: "X")
         advanceFrameStroke
       elsif self.frame_stroke == 2
-        if isLastTurnStrike?
+        if isStrike?(self.current_frame)
           self.frames.where(frame_number: self.current_frame).update_all(second_stroke: "X")
         else
           self.frames.where(frame_number: self.current_frame).update_all(second_stroke: "/")
         end
-        advanceFrameStroke
+        self.frame_stroke = 3
       elsif self.frame_stroke == 3
-        if isLastTurnStrike?
+        if isStrike?(self.current_frame)
           self.frames.where(frame_number: self.current_frame).update_all(extra_stroke: "X")
         else
           self.frames.where(frame_number: self.current_frame).update_all(extra_stroke: "/")
         end
+        incrementFrameCount
         endGame
       end
 
@@ -116,17 +127,20 @@ class Game < ActiveRecord::Base
         advanceFrameStroke
       elsif self.frame_stroke == 2
         self.frames.where(frame_number: self.current_frame).update_all(second_stroke: "-")
-        if isLastTurnStrike
-        	advanceFrameStroke
+        if isStrike?(self.current_frame)
+        	self.frame_stroke = 3
+        else
+        	incrementFrameCount
+        	endGame
         end
       elsif self.frame_stroke == 3
         self.frames.where(frame_number: self.current_frame).update_all(extra_stroke: "-")
+        incrementFrameCount
         endGame
       end
-      
     
     # Handle Zero pins bowled in frames 1 through 9
-    elsif self.bowled_pins == 0
+    elsif self.current_frame < 10 && self.bowled_pins == 0
       if self.frame_stroke == 1
         self.frames.where(frame_number: self.current_frame).update_all(first_stroke: "-")
         advanceFrameStroke
@@ -141,18 +155,25 @@ class Game < ActiveRecord::Base
 
     # Handle all other strokes
     else
-      if self.frame_stroke == 1 
+      if self.current_frame <= 10 && self.frame_stroke == 1
         self.frames.where(frame_number: self.current_frame).update_all(first_stroke: self.bowled_pins)
         advanceFrameStroke
-      elsif self.frame_stroke == 2
+      elsif self.current_frame < 10 && self.frame_stroke == 2
         self.frames.where(frame_number: self.current_frame).update_all(second_stroke: self.bowled_pins)
         advanceFrameStroke
         incrementFrameCount
-        if self.current_frame == 10
-          endGame
-        end
-      else
-        endGame
+      elsif self.current_frame == 10 && self.frame_stroke == 2
+      	self.frames.where(frame_number: self.current_frame).update_all(second_stroke: self.bowled_pins)
+    		if isStrike?(self.current_frame)
+    			self.frame_stroke = 3
+    		else
+    			incrementFrameCount
+    			endGame
+    		end
+    	elsif self.current_frame == 10 && self.frame_stroke == 3
+      	self.frames.where(frame_number: self.current_frame).update_all(extra_stroke: self.bowled_pins)
+      	incrementFrameCount
+    		endGame
       end
     end
     calculateTotalScore
@@ -167,13 +188,46 @@ class Game < ActiveRecord::Base
   end
 
   def isStrike?(frame_to_check)
-    self.frames.where(frame_number: frame_to_check, first_stroke: "X") ||
-    self.frames.where(frame_number: frame_to_check, second_stroke: "X")
+  	if self.frame_stroke == 2 && self.current_frame == 10
+  		frame = self.getFrame(frame_to_check)
+  		if frame.first_stroke = "X"
+  			return true
+  		else
+  			return false
+  		end
+  	elsif self.frame_stroke == 3 && self.current_frame == 10
+  		frame = self.getFrame(frame_to_check)
+  		if frame.second_stroke = "X"
+  			return true
+  		else
+  			return false
+  		end
+  	elsif self.frame_stroke == 1
+  		frame = self.getFrame(frame_to_check - 1)
+  		if frame.first_stroke ="X"
+  			return true
+  		else
+  			return false
+  		end
+  	end
   end
 
   def isSpare?(frame_to_check)
-    self.frames.where(frame_number: frame_to_check, second_stroke: "/") || 
-    self.frames.where(frame_number: frame_to_check, extra_stroke: "/")
+    if self.frame_stroke == 3 && self.current_frame == 10
+  		frame = self.getFrame(frame_to_check)
+  		if frame.second_stroke = "/"
+  			return true
+  		else
+  			return false
+  		end
+  	elsif self.frame_stroke == 1
+  		frame = self.getFrame(frame_to_check - 1)
+  		if frame.second_stroke ="/"
+  			return true
+  		else
+  			return false
+  		end
+  	end
   end
 
   def calculateTotalScore
