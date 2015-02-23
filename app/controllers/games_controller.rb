@@ -70,38 +70,46 @@ class GamesController < ApplicationController
   end
 
   def bowl
-    resetPinsIfNecessary
+    if !isGameOver
 
-    # Handle first stroke for all frames
-    if @game.frame_stroke == 1 && @game.current_frame <= 10
-      @game.bowled_pins = randomizePinCount( 0, 10 )
-      @game.pins_left = 10 - @game.bowled_pins
-    
-    # Handle second stroke for frames 1 through 9
-    elsif @game.frame_stroke == 2 && @game.current_frame < 10
-      @game.bowled_pins = randomizePinCount( 0, @game.pins_left )
-      @game.pins_left = @game.pins_left - @game.bowled_pins
+      resetPinsIfNecessary
 
-    # Handle second and third stroke for frame 10  
-    elsif @game.frame_stroke != 1 && @game.current_frame == 10
-      if isLastTurnStrike()  || isLastTurnSpare()
+      # Handle first stroke for all frames
+      if @game.frame_stroke == 1 && @game.current_frame <= 10
         @game.bowled_pins = randomizePinCount( 0, 10 )
         @game.pins_left = 10 - @game.bowled_pins
-      else
-        @game.bowled_pins = randomizePinCount( 0, 10 )
-        @game.pins_left = 10 - @game.bowled_pins
+      
+      # Handle second stroke for frames 1 through 9
+      elsif @game.frame_stroke == 2 && @game.current_frame < 10
+        @game.bowled_pins = randomizePinCount( 0, @game.pins_left )
+        @game.pins_left = @game.pins_left - @game.bowled_pins
+
+      # Handle second and third stroke for frame 10  
+      elsif @game.frame_stroke != 1 && @game.current_frame == 10
+        if isLastTurnStrike()  || isLastTurnSpare()
+          @game.bowled_pins = randomizePinCount( 0, 10 )
+          @game.pins_left = 10 - @game.bowled_pins
+        else
+          @game.bowled_pins = randomizePinCount( 0, 10 )
+          @game.pins_left = 10 - @game.bowled_pins
+        end
       end
-    end
 
-    markScorecard
+      markScorecard
 
-    respond_to do |format|
-      if @game.save
-        format.html { redirect_to games_url, notice: 'Game was successfully updated.' }
-        format.json { render :show, status: :ok, location: games_url }
-      else
-        format.html { render :edit }
-        format.json { render json: @game.errors, status: :unprocessable_entity }
+      respond_to do |format|
+        if @game.save
+          format.html { redirect_to games_url, notice: 'Game was successfully updated.' }
+          format.json { render :show, status: :ok, location: games_url }
+        else
+          format.html { render :edit }
+          format.json { render json: @game.errors, status: :unprocessable_entity }
+        end
+      end
+    else
+      respond_to do |format|
+          format.html { redirect_to games_url, notice: 'Game is over.' }
+          format.json { render :show, status: :ok, location: games_url }
       end
     end
   end
@@ -139,8 +147,10 @@ class GamesController < ApplicationController
 
 
     def incrementFrameCount
-      @game.current_frame += 1
-      @frame = @game.frames.create(frame_number: @game.current_frame)
+      if @game.current_frame < 10
+        @game.current_frame += 1
+        @frame = @game.frames.create(frame_number: @game.current_frame)
+      end
     end
 
     def advanceFrameStroke
@@ -149,6 +159,10 @@ class GamesController < ApplicationController
       else
         @game.frame_stroke = 1
       end
+    end
+
+    def endGame
+      @game.frame_stroke = -1
     end
 
     def markScorecard
@@ -172,13 +186,14 @@ class GamesController < ApplicationController
           else
             @game.frames.where(frame_number: @game.current_frame).update_all(second_stroke: "/")
           end
-          incrementFrameCount
+          endGame
         elsif @game.frame_stroke == 3
           if isLastTurnStrike || isLastTurnSpare
             @game.frames.where(frame_number: @game.current_frame).update_all(extra_stroke: "X")
           else
             @game.frames.where(frame_number: @game.current_frame).update_all(extra_stroke: "/")
           end
+          endGame
         end
       
       # Handle Zero pins bowled
@@ -189,11 +204,10 @@ class GamesController < ApplicationController
         elsif @game.frame_stroke == 2
           @game.frames.where(frame_number: @game.current_frame).update_all(second_stroke: "-")
           advanceFrameStroke
-          if @game.current_frame != 10
-            incrementFrameCount
-          end
+          incrementFrameCount
         elsif @game.frame_stroke == 3
           @game.frames.where(frame_number: @game.current_frame).update_all(extra_stroke: "-")
+          endGame
         end
       # Handle all other strokes
       else
@@ -203,11 +217,12 @@ class GamesController < ApplicationController
         elsif @game.frame_stroke == 2
           @game.frames.where(frame_number: @game.current_frame).update_all(second_stroke: @game.bowled_pins)
           advanceFrameStroke
-          if @game.current_frame != 10
-            incrementFrameCount
+          incrementFrameCount
+          if @game.current_frame == 10
+            endGame
           end
         else
-          @game.frames.where(frame_number: @game.current_frame).update_all(extra_stroke: @game.bowled_pins)
+          endGame
         end
       end
     end
@@ -223,5 +238,9 @@ class GamesController < ApplicationController
 
     def calculateTotalScore
       # Calculate the sum of values in @frame_scores
+    end
+
+    def isGameOver
+      @game.frame_stroke == -1
     end
 end
