@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150223004223) do
+ActiveRecord::Schema.define(version: 20150223052854) do
 
   create_table "frames", force: true do |t|
     t.string   "first_stroke"
@@ -22,6 +22,8 @@ ActiveRecord::Schema.define(version: 20150223004223) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "game_id"
+    t.integer  "bowled_pins"
+    t.integer  "pins_left"
   end
 
   create_table "games", force: true do |t|
@@ -30,6 +32,8 @@ ActiveRecord::Schema.define(version: 20150223004223) do
     t.integer  "total_score"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "bowled_pins"
+    t.integer  "pins_left"
   end
 
 end
