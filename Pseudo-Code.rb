@@ -12,11 +12,7 @@ Upcoming Features:
 
 Current Challenge:
 
-	Accessing Nested Attribute for Frames in Games Controller
-
-Upcoming Challenges:
-
-	Table Formatting of Scorecard
+	Cannot Get Frame Score to Tally Correctly
 
 Resolved:
 
