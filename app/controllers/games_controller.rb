@@ -15,6 +15,12 @@ class GamesController < ApplicationController
   # GET /games/new
   def new
     @game = Game.new
+
+    @bowled_pins = 0
+    @pins_left = 10
+    @game.current_frame = 1
+    @game.frame_stroke = 1
+    @game.total_score = 0
   end
 
   # GET /games/1/edit
@@ -26,14 +32,12 @@ class GamesController < ApplicationController
   def create
     @game = Game.new(game_params)
 
-    @bowled_pins = 0
-    @pins_left = 10
-    @game.current_frame = 1
-    @game.frame_stroke = 1
-    @game.total_score = 0
-
     respond_to do |format|
       if @game.save
+        @frames = @game.frames
+        new_frame = Frame.create(game_id: @game.id, frame_number: @game.current_frame)
+        @frames << new_frame 
+
         format.html { redirect_to @game, notice: 'Game was successfully created.' }
         format.json { render :show, status: :created, location: @game }
       else
@@ -128,9 +132,23 @@ class GamesController < ApplicationController
       @game = Game.find(params[:id])
     end
 
+    # Never trust parameters from the scary internet, only allow the white list through.
+    def game_params
+      params.require(:game).permit(:current_frame, :frame_stroke, :total_score, 
+        frames_attributes: [:first_stroke , :second_stroke, :extra_stroke])
+    end
+
+    def resetPinsIfNecessary
+      if ( @game.frame_stroke == 2 && @game.current_frame < 10 ) || isLastTurnStrike || isLastTurnSpare
+        @pins_left = 10
+        @bowled_pins = 0
+      end
+    end
+
     def randomizePinCount ( start_value, finish_value)
       return rand( start_value..finish_value )
     end
+
 
     def incrementFrameCount
       @game.current_frame += 1
@@ -145,6 +163,8 @@ class GamesController < ApplicationController
     end
 
     def markScorecard
+      @frames = @goal.frames.where(frame_number: current_frame)
+
       # Handle Strikes and Spares for frames 1 through 9
       if @game.current_frame < 10 && @pins_left == 0
         if @game.frame_stroke == 1
@@ -193,13 +213,6 @@ class GamesController < ApplicationController
       end
     end
 
-    def resetPinsIfNecessary
-      if ( @game.frame_stroke == 2 && @game.current_frame < 10 ) || isLastTurnStrike || isLastTurnSpare
-        @pins_left = 10
-        @bowled_pins = 0
-      end
-    end
-
     def isLastTurnStrike
 
     end
@@ -210,11 +223,5 @@ class GamesController < ApplicationController
 
     def calculateTotalScore
       # Calculate the sum of values in @frame_scores
-    end
-
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def game_params
-      params.require(:game).permit(:current_frame, :frame_stroke, :total_score, 
-        frames_attributes: [:first_stroke , :second_stroke, :extra_stroke])
     end
 end

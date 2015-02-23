@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150221231554) do
+ActiveRecord::Schema.define(version: 20150223004223) do
 
   create_table "frames", force: true do |t|
     t.string   "first_stroke"
@@ -21,6 +21,7 @@ ActiveRecord::Schema.define(version: 20150221231554) do
     t.integer  "frame_number"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "game_id"
   end
 
   create_table "games", force: true do |t|
