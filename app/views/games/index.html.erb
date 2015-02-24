@@ -1,4 +1,10 @@
 <p id="notice"><%= notice %></p>
+
+<p>
+  <%= link_to 'Home', root_path, class: "btn btn-xs btn-link"%> | 
+  <%= link_to 'New Game', games_path, :method => :post %>
+</p>
+
 <h1>List of Games</h1>
 
 <table>
@@ -31,7 +37,3 @@
     <% end %>
   </tbody>
 </table>
-
-<br>
-
-<%= link_to 'New Game', games_path, :method => :post %>
