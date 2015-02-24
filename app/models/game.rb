@@ -19,7 +19,7 @@ class Game < ActiveRecord::Base
   end
 
 	def rollBall
-		self.resetPinsIfNecessary
+		self.resetPinsIfNecessary!
 
     # Handle first stroke for all frames
     if self.frame_stroke == 1 && self.current_frame <= 10
@@ -53,13 +53,11 @@ class Game < ActiveRecord::Base
     end
 	end
 
-	def incrementFrameCount
-    if self.current_frame < 10
-      self.current_frame += 1
-    end
+	def incrementFrameCount!
+     self.current_frame += 1
   end
 
-  def resetPinsIfNecessary
+  def resetPinsIfNecessary!
     if ( self.frame_stroke == 1 && self.current_frame < 10 ) || isLastTurnStrike? || isLastTurnSpare?
       @pins_left = 10
       @bowled_pins = 0
@@ -73,7 +71,7 @@ class Game < ActiveRecord::Base
   def advanceFrameStroke
     if self.frame_stroke == 1
       self.frame_stroke = 2
-    elsif self.frame_number == 2 && self.current_frame == 10 
+    elsif self.frame_stroke == 2 && self.current_frame == 10 
     	self.frame_stroke = 3
     else
       self.frame_stroke = 1
@@ -93,7 +91,7 @@ class Game < ActiveRecord::Base
         self.frames.where(frame_number: self.current_frame).update_all(second_stroke: "/")
       end
       self.frame_stroke = 1
-      incrementFrameCount
+      incrementFrameCount!
 
     # Handle Strikes and Spares for frame 10
     elsif self.current_frame == 10 && @pins_left == 0
@@ -141,7 +139,7 @@ class Game < ActiveRecord::Base
       elsif self.frame_stroke == 2
         self.frames.where(frame_number: self.current_frame).update_all(second_stroke: "-")
         advanceFrameStroke
-        incrementFrameCount
+        incrementFrameCount!
       elsif self.frame_stroke == 3
         self.frames.where(frame_number: self.current_frame).update_all(extra_stroke: "-")
         endGame
@@ -149,19 +147,22 @@ class Game < ActiveRecord::Base
 
     # Handle all other strokes
     else
-      if self.current_frame <= 10 && self.frame_stroke == 1
+      if self.current_frame < 10 && self.frame_stroke == 1
+        self.frames.where(frame_number: self.current_frame).update_all(first_stroke: self.bowled_pins)
+        advanceFrameStroke
+      elsif self.current_frame == 10 && self.frame_stroke == 1
         self.frames.where(frame_number: self.current_frame).update_all(first_stroke: self.bowled_pins)
         advanceFrameStroke
       elsif self.current_frame < 10 && self.frame_stroke == 2
         self.frames.where(frame_number: self.current_frame).update_all(second_stroke: self.bowled_pins)
         advanceFrameStroke
-        incrementFrameCount
+        incrementFrameCount!
       elsif self.current_frame == 10 && self.frame_stroke == 2
       	self.frames.where(frame_number: self.current_frame).update_all(second_stroke: self.bowled_pins)
-    		if isStrike?(self.current_frame)
+    		if isLastTurnStrike?
     			advanceFrameStroke
     		else
-    			incrementFrameCount
+    			incrementFrameCount!
     			endGame
     		end
     	elsif self.current_frame == 10 && self.frame_stroke == 3
@@ -174,7 +175,7 @@ class Game < ActiveRecord::Base
 
   def isLastTurnStrike?
   	if self.frame_stroke == 2 && self.current_frame == 10
-  		frame = self.getFrame(self.current_frame-1)
+  		frame = self.getFrame(self.current_frame)
   		if frame.first_stroke = "X"
   			return true
   		else
