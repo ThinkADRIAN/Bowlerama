@@ -1,4 +1,5 @@
-<h1>Listing games</h1>
+<p id="notice"><%= notice %></p>
+<h1>List of Games</h1>
 
 <table>
   <thead>
@@ -13,13 +14,19 @@
   <tbody>
     <% @games.each do |game| %>
       <tr>
-        <td><%= game.current_frame %></td>
-        <td><%= game.frame_stroke %></td>
+        <td><%= if game.frame_stroke == -1
+                  "Game Over"
+                else
+                  game.current_frame
+                end %></td>
+        <td><%= if game.frame_stroke == -1
+                  "-"
+                else
+                  game.frame_stroke
+                end %></td>
         <td><%= game.total_score %></td>
-        <td><%= link_to 'Roll to Bowl', bowl_game_path(game), class: "btn btn-xs btn-link", :method => :put %></td>
-        <td><%= link_to 'Show', game %></td>
-        <td><%= link_to 'Edit', edit_game_path(game) %></td>
-        <td><%= link_to 'Destroy', game, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to 'Play', game %></td>
+        <td><%= link_to 'Delete', game, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
   </tbody>

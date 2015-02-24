@@ -83,7 +83,7 @@ class GamesController < ApplicationController
 
       respond_to do |format|
         if @game.save
-          format.html { redirect_to games_url, notice: 'Game was successfully updated.' }
+          format.html { redirect_to action: "show", notice: 'Game was successfully updated.' }
           format.json { render :show, status: :ok, location: games_url }
         else
           format.html { render :edit }

@@ -1,6 +1,11 @@
 <p id="notice"><%= notice %></p>
 
 <p>
+	<%= link_to 'Roll to Bowl', bowl_game_path(@game), class: "btn btn-xs btn-link", :method => :put %> | 
+  <%= link_to 'Back to List of Games', games_path %>
+</p>
+
+<p>
   <strong>Current frame:</strong>
   <%= @game.current_frame %>
 </p>
@@ -15,5 +20,33 @@
   <%= @game.total_score %>
 </p>
 
-<%= link_to 'Edit', edit_game_path(@game) %> |
+<h1>Game Details</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Frame number</th>
+      <th>First stroke</th>
+      <th>Second stroke</th>
+      <th>Extra stroke</th>
+      <th>Frame score</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @game.frames.each do |frame| %>
+      <tr>
+        <td><%= frame.frame_number %></td>
+        <td><%= frame.first_stroke %></td>
+        <td><%= frame.second_stroke %></td>
+        <td><%= frame.extra_stroke %></td>
+        <td><%= frame.frame_score %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
 <%= link_to 'Back', games_path %>
