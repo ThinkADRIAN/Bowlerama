@@ -1,28 +1,20 @@
 == README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This is a simple bowling simulation built with Ruby on Rails.
 
-Things you may want to cover:
+It was built as part of the application process for Fullstack Academy with the following specifications:
 
-* Ruby version
+Your task is to build a web application that simulates a game of bowling. At the minimum this game should have the following features:
 
-* System dependencies
+1) A Scoreboard
+2) Buttons to start and reset the game
+3) A "Bowl" button that initiates a turn bowling, with the result then displayed on the scoreboard
+4) A final outcome determining the result of the game
 
-* Configuration
+The front-end doesn't need to be anything beautiful, just functional. You also don’t need to include any animations – This project just needs to simulate the scoring of each bowling round and game. We've intentionally left the other details of the game a bit vague - You can decide whatever direction you'd like to take it!
 
-* Database creation
+To get the application up and running:
 
-* Database initialization
+* Clone the repository
 
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
-
-
-Please feel free to use a different markup language if you do not plan to run
-<tt>rake doc:app</tt>.
+* Spin it up like any other Rails Application
