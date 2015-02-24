@@ -2,36 +2,13 @@
 	<%= if !@game.isGameOver
       link_to 'Bowl', bowl_game_path(@game), class: "btn btn-xs btn-link", :method => :put, class: "btn btn-success"
     else
-      link_to 'See Results', bowl_game_path(@game), class: "btn btn-xs btn-link", :method => :put, class: "btn btn-success", data: { confirm: 'Your Final Score: ' + @game.total_score.to_s } 
+      #link_to 'See Results', bowl_game_path(@game), class: "btn btn-xs btn-link", :method => :put, class: "btn btn-success", data: { confirm: 'Your Final Score: ' + @game.total_score.to_s } 
     end
   %>
-  <%= if !@game.isGameOver 
+  <%= if true#!@game.isGameOver 
     link_to 'Reset', reset_game_path(@game), class: "btn btn-xs btn-link", :method => :put, class: "btn btn-danger", data: { confirm: 'Are you sure?' } 
     end 
   %>
-</p>
-
-<p>
-  <strong>Current frame:</strong>
-  <%= if @game.frame_stroke == -1
-        "Game Over"
-      else
-        @game.current_frame
-      end %>
-</p>
-
-<p>
-  <strong>Frame stroke:</strong>
-  <%= if @game.frame_stroke == -1
-        "-"
-      else
-        @game.frame_stroke
-      end %>
-</p>
-
-<p>
-  <strong>Total score:</strong>
-  <%= @game.total_score %>
 </p>
 
 <h1>Score Card</h1>
@@ -43,19 +20,23 @@
       <th>First stroke</th>
       <th>Second stroke</th>
       <th>Extra stroke</th>
-      <th>Frame score</th>
+      <th>Total</th>
       <th colspan="3"></th>
     </tr>
   </thead>
 
   <tbody>
-    <% @game.frames.each do |frame| %>
+    <% frame_total = 0
+      @game.frames.each do |frame| 
+        frame_total += frame.frame_score%>
       <tr>
         <td><%= frame.frame_number %></td>
         <td><%= frame.first_stroke %></td>
         <td><%= frame.second_stroke %></td>
         <td><%= frame.extra_stroke %></td>
-        <td><%= frame.frame_score %></td>
+        <td><%= if !frame.first_stroke.nil?
+          frame_total
+        end %></td>
       </tr>
     <% end %>
   </tbody>
