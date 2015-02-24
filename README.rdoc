@@ -6,10 +6,10 @@ It was built as part of the application process for Fullstack Academy with the f
 
 Your task is to build a web application that simulates a game of bowling. At the minimum this game should have the following features:
 
-1) A Scoreboard
-2) Buttons to start and reset the game
-3) A "Bowl" button that initiates a turn bowling, with the result then displayed on the scoreboard
-4) A final outcome determining the result of the game
+* A Scoreboard
+* Buttons to start and reset the game
+* A "Bowl" button that initiates a turn bowling, with the result then displayed on the scoreboard
+* A final outcome determining the result of the game
 
 The front-end doesn't need to be anything beautiful, just functional. You also don’t need to include any animations – This project just needs to simulate the scoring of each bowling round and game. We've intentionally left the other details of the game a bit vague - You can decide whatever direction you'd like to take it!
 
