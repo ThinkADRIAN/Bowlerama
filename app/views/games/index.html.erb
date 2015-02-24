@@ -31,7 +31,11 @@
                   game.frame_stroke
                 end %></td>
         <td><%= game.total_score %></td>
-        <td><%= link_to 'Play', game %></td>
+        <td><%= if game.frame_stroke == -1
+                  link_to 'View', game
+                else
+                  link_to 'Play', game
+                end %></td>
         <td><%= link_to 'Delete', game, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
