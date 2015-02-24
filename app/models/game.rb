@@ -1,5 +1,5 @@
 class Game < ActiveRecord::Base
-	has_many :frames, :dependent => :destroy
+	has_many :frames, -> { order "frame_number asc" }, :dependent => :destroy
 	accepts_nested_attributes_for :frames
 
 	after_create :init
