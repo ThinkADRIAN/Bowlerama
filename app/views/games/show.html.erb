@@ -5,7 +5,10 @@
       link_to 'See Results', bowl_game_path(@game), class: "btn btn-xs btn-link", :method => :put, class: "btn btn-success", data: { confirm: 'Your Final Score: ' + @game.total_score.to_s } 
     end
   %>
-  <%= link_to 'Reset', reset_game_path(@game), class: "btn btn-xs btn-link", :method => :put, class: "btn btn-danger", data: { confirm: 'Are you sure?' } %>
+  <%= if !@game.isGameOver 
+    link_to 'Reset', reset_game_path(@game), class: "btn btn-xs btn-link", :method => :put, class: "btn btn-danger", data: { confirm: 'Are you sure?' } 
+    end 
+  %>
 </p>
 
 <p>
