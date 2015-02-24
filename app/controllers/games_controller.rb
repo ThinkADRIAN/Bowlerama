@@ -75,14 +75,13 @@ class GamesController < ApplicationController
   end
 
   def bowl
-
-    @games = Game.joins(:game => :frames).order("frames.frame_number")
-
     if !@game.isGameOver
 
       @game.rollBall
 
       @game.markScorecard
+
+      @game.frames.includes(:frame_number).order("frames.frame_number DESC")
 
       respond_to do |format|
         if @game.save
