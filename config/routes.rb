@@ -3,7 +3,7 @@ Rails.application.routes.draw do
 
   resources :games do
     member do
-      put :bowl
+      put :bowl, :reset
     end
     resources :frames
   end

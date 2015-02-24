@@ -250,4 +250,13 @@ class Game < ActiveRecord::Base
   		end
   	}
   end
+
+  def clearFrames
+    self.frames.clear
+    self.init
+    self.current_frame = 1
+    self.frame_stroke = 1
+    self.total_score = 0
+    self.save
+  end
 end

@@ -1,5 +1,5 @@
 class GamesController < ApplicationController
-  before_action :set_game, only: [:show, :edit, :update, :destroy, :bowl]
+  before_action :set_game, only: [:show, :edit, :update, :destroy, :bowl, :reset]
 
   # GET /games
   # GET /games.json
@@ -99,10 +99,16 @@ class GamesController < ApplicationController
   end
 
   def reset
-    @game.destroy
+    @game.clearFrames
+
     respond_to do |format|
-      format.html { redirect_to games_url, notice: 'Game was successfully destroyed.' }
-      format.json { head :no_content }
+      if @game.save
+        format.html { redirect_to action: "show", notice: 'Game was successfully reset.' }
+        format.json { head :no_content }
+      else
+        format.html { render :edit }
+        format.json { render json: @game.errors, status: :unprocessable_entity }
+      end
     end
   end
 
