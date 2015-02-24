@@ -10,7 +10,8 @@ class GamesController < ApplicationController
   # GET /games/1
   # GET /games/1.json
   def show
-    @game = Game.find(params[:id]).joins(:frame).order('frames.frame_number')
+    @games = Game.joins(:frames).order('frames.frame_number')
+    @game = @games.find(params[:id])
   end
 
   # GET /games/new
