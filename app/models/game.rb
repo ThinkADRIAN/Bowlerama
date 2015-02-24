@@ -175,21 +175,21 @@ class Game < ActiveRecord::Base
   def isLastStrokeStrike?
   	if self.frame_stroke == 2 && self.current_frame == 10
   		frame = self.getFrame(self.current_frame)
-  		if frame.first_stroke = "X"
+  		if frame.first_stroke == "X"
   			return true
   		else
   			return false
   		end
   	elsif self.frame_stroke == 3 && self.current_frame == 10
   		frame = self.getFrame(self.current_frame)
-  		if frame.second_stroke = "X"
+  		if frame.second_stroke == "X"
   			return true
   		else
   			return false
   		end
   	elsif self.frame_stroke == 1
   		frame = self.getFrame(self.current_frame-1)
-  		if frame.first_stroke ="X"
+  		if frame.first_stroke == "X"
   			return true
   		else
   			return false
@@ -200,14 +200,14 @@ class Game < ActiveRecord::Base
   def isLastStrokeSpare?
     if self.frame_stroke == 3 && self.current_frame == 10
   		frame = self.getFrame(self.current_frame)
-  		if frame.second_stroke = "/"
+  		if frame.second_stroke == "/"
   			return true
   		else
   			return false
   		end
   	elsif self.frame_stroke == 1
   		frame = self.getFrame(self.current_frame-1)
-  		if frame.second_stroke ="/"
+  		if frame.second_stroke == "/"
   			return true
   		else
   			return false
