@@ -3,7 +3,8 @@ class Frame < ActiveRecord::Base
 
   # returns a relative frame to the current one
   def getFrame(frames_to_shift)
-    game.frames[game.current_frame + frames_to_shift]
+    adjustment_for_frame_indexing = 1
+    game.frames[game.current_frame + frames_to_shift - adjustment_for_frame_indexing]
   end
 
   # increments a frame's score
