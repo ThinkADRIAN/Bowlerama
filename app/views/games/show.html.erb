@@ -7,12 +7,20 @@
 
 <p>
   <strong>Current frame:</strong>
-  <%= @game.current_frame %>
+  <%= if @game.frame_stroke == -1
+        "Game Over"
+      else
+        @game.current_frame
+      end %>
 </p>
 
 <p>
   <strong>Frame stroke:</strong>
-  <%= @game.frame_stroke %>
+  <%= if @game.frame_stroke == -1
+        "-"
+      else
+        @game.frame_stroke
+      end %>
 </p>
 
 <p>
