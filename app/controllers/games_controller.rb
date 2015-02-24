@@ -10,6 +10,7 @@ class GamesController < ApplicationController
   # GET /games/1
   # GET /games/1.json
   def show
+      @game.frames.includes(:frame_number).order("frames.frame_number DESC")
   end
 
   # GET /games/new
@@ -80,8 +81,6 @@ class GamesController < ApplicationController
       @game.rollBall
 
       @game.markScorecard
-
-      @game.frames.includes(:frame_number).order("frames.frame_number DESC")
 
       respond_to do |format|
         if @game.save
