@@ -83,7 +83,7 @@ class GamesController < ApplicationController
 
       respond_to do |format|
         if @game.save
-          format.html { redirect_to action: "show", notice: 'Game was successfully updated.' }
+          format.html { redirect_to @game, action: "show", notice: 'Game was successfully updated.' }
           format.json { render :show, status: :ok, location: games_url }
         else
           format.html { render :edit }
@@ -92,7 +92,7 @@ class GamesController < ApplicationController
       end
     else
       respond_to do |format|
-          format.html { redirect_to action: "show", notice: 'Nice Game!  Your final score: ' + @game.total_score.to_s }
+          format.html { redirect_to @game, action: "show", notice: 'Nice Game!  Your final score: ' + @game.total_score.to_s }
           format.json { render :show, status: :ok, location: games_url }
       end
     end
@@ -103,7 +103,7 @@ class GamesController < ApplicationController
 
     respond_to do |format|
       if @game.save
-        format.html { redirect_to action: "show", notice: 'Game was successfully reset.' }
+        format.html { redirect_to @game, action: "show", notice: 'Game was successfully reset.' }
         format.json { head :no_content }
       else
         format.html { render :edit }
