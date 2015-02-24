@@ -1,16 +1,11 @@
 Pseudo-Code
 
 Current Feature:
-
-	Calculate Frame Score
+	
 
 Upcoming Features:
 
-	Calculate Total Score
-
 Current Challenge:
-
-	Cannot Get Frame Score to Tally Correctly
 
 Resolved:
 
@@ -20,6 +15,8 @@ Resolved:
 	Bootstrap
 	Bootswatch
 	Reset Game Button
+	Calculate Frame Score
+	Calculate Total Score
 
 ----------
 
