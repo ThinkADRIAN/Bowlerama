@@ -7,10 +7,6 @@ Current Feature:
 Upcoming Features:
 
 	Calculate Total Score
-	Reset Game Button
-	Show Scorecard (Use Tables)
-	Bootstrap
-	Bootswatch
 
 Current Challenge:
 
@@ -20,6 +16,10 @@ Resolved:
 
 	Bowl Button
 	Bowl Action for Games Controller
+	Show Scorecard (Use Tables)
+	Bootstrap
+	Bootswatch
+	Reset Game Button
 
 ----------
 
