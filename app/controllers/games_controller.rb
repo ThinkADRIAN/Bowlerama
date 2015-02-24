@@ -92,7 +92,7 @@ class GamesController < ApplicationController
       end
     else
       respond_to do |format|
-          format.html { redirect_to games_url, notice: 'Game is over.  Your final score: ' + @game.total_score.to_s }
+          format.html { redirect_to action: "show", notice: 'Nice Game!  Your final score: ' + @game.total_score.to_s }
           format.json { render :show, status: :ok, location: games_url }
       end
     end
