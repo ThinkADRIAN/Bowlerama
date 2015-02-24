@@ -13,6 +13,9 @@
 
 ActiveRecord::Schema.define(version: 20150223052854) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "frames", force: true do |t|
     t.string   "first_stroke"
     t.string   "second_stroke"
@@ -22,8 +25,6 @@ ActiveRecord::Schema.define(version: 20150223052854) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "game_id"
-    t.integer  "bowled_pins"
-    t.integer  "pins_left"
   end
 
   create_table "games", force: true do |t|
