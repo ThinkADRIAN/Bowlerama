@@ -10,7 +10,6 @@ class GamesController < ApplicationController
   # GET /games/1
   # GET /games/1.json
   def show
-      @game.frames.includes(:frame_number).order("frames.frame_number DESC")
   end
 
   # GET /games/new
