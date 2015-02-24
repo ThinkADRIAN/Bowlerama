@@ -49,8 +49,7 @@
   </thead>
 
   <tbody>
-    <% @game.frames.sort_by {|frame| frame.frame_number}
-      @game.frames.each do |frame| %>
+    <% @game.frames.each do |frame| %>
       <tr>
         <td><%= frame.frame_number %></td>
         <td><%= frame.first_stroke %></td>
