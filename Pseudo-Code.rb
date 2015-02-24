@@ -9,6 +9,8 @@ Upcoming Features:
 	Calculate Total Score
 	Reset Game Button
 	Show Scorecard (Use Tables)
+	Bootstrap
+	Bootswatch
 
 Current Challenge:
 
