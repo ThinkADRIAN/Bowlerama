@@ -1,7 +1,6 @@
-Pseudo-Code
+Notes
 
 Current Feature:
-	
 
 Upcoming Features:
 
@@ -19,6 +18,8 @@ Resolved:
 	Calculate Total Score
 
 ----------
+
+Pseudo-Code
 
 Player has_many Games
 Game has_many Frames
