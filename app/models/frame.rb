@@ -40,28 +40,13 @@ class Frame < ActiveRecord::Base
   end
 
   def isStrike?
-    # Handle strike in first stroke of frames 1 through 10
-    if second_stroke.nil?
-      self.first_stroke == "X"
-
-    # Handle strike in second stroke of frame 10
-    elsif extra_stroke.nil?
-      self.second_stroke == "X"
-
-    # Handle strike in extra stroke of frame 10
-    else 
-      self.extra_stroke == "X"
-    end
+    self.first_stroke == "X" ||
+    self.second_stroke == "X" ||
+    self.extra_stroke == "X"
   end
 
   def isSpare?
-    # Handle spare in frames 1 through 10
-    if extra_stroke.nil?
-      self.second_stroke == "/"
-
-    # Handle spare in extra stroke of frame 10
-    else
-      self.extra_stroke == "/"
-    end
+    self.second_stroke == "/" ||
+    self.extra_stroke == "/"
   end
 end
