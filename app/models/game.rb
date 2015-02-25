@@ -19,36 +19,37 @@ class Game < ActiveRecord::Base
   end
 
 	def rollBall
-		self.resetPinsIfNecessary!
+    self.resetPinsIfNecessary!
 
     # Handle first stroke for all frames
     if self.frame_stroke == 1 && self.current_frame <= 10
-      self.bowled_pins = randomizePinCount( 0, 10 )
-      self.pins_left = 10 - self.bowled_pins
+      randomizePinCountAfterReset
     
-    # Handle second stroke for frames 1 through 9
-    elsif self.frame_stroke == 2 && self.current_frame < 10
-      self.bowled_pins = randomizePinCount( 0, self.pins_left )
-      self.pins_left = self.pins_left - self.bowled_pins
+    # Handle second stroke for all frames
+    elsif self.frame_stroke == 2 
+      
+      # Frames 1 through 9
+      if self.current_frame < 10
+        randomizePinCountForSecondThrow
+      
+      # Frame 10
+      elsif self.current_frame == 10
+        
+        if isLastStrokeStrike?
+          randomizePinCountAfterReset
+        
+        else
+          randomizePinCountForSecondThrow
+        end
 
-    # Handle second stroke for frame 10
-    elsif self.frame_stroke == 2 && self.current_frame == 10
-      if isLastStrokeStrike?
-      	self.bowled_pins = randomizePinCount( 0, 10 )
-        self.pins_left = 10 - self.bowled_pins
-      else
-        self.bowled_pins = randomizePinCount( 0, self.pins_left )
-        self.pins_left = self.pins_left - self.bowled_pins
       end
 
   	# Handle third stroke for frame 10
 	  elsif self.frame_stroke == 3 && self.current_frame == 10
       if isLastStrokeStrike? || isLastStrokeSpare?
-      	self.bowled_pins = randomizePinCount( 0, 10 )
-        self.pins_left = 10 - self.bowled_pins
+      	randomizePinCountAfterReset
       else
-        self.bowled_pins = randomizePinCount( 0, self.pins_left )
-        self.pins_left = self.pins_left - self.bowled_pins
+        randomizePinCountForSecondThrow
       end
     end
 	end
@@ -66,6 +67,16 @@ class Game < ActiveRecord::Base
 
   def randomizePinCount( start_value, finish_value )
     return rand( start_value..finish_value )
+  end
+
+  def randomizePinCountAfterReset
+    self.bowled_pins = randomizePinCount( 0, 10 )
+    self.pins_left = 10 - self.bowled_pins
+  end
+
+  def randomizePinCountForSecondThrow
+    self.bowled_pins = randomizePinCount( 0, self.pins_left )
+    self.pins_left = self.pins_left - self.bowled_pins
   end
 
   def advanceFrameStroke!
@@ -94,7 +105,7 @@ class Game < ActiveRecord::Base
       incrementFrameCount!
 
     # Handle Strikes and Spares for frame 10
-    elsif self.current_frame == 10 && @pins_left == 0
+    elsif self.current_frame == 10 && self.pins_left == 0
       if self.frame_stroke == 1
         self.frames.where(frame_number: self.current_frame).update_all(first_stroke: "X")
         advanceFrameStroke
