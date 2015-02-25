@@ -108,19 +108,19 @@ class Game < ActiveRecord::Base
     elsif self.current_frame == 10 && self.pins_left == 0
       if self.frame_stroke == 1
         self.frames.where(frame_number: self.current_frame).update_all(first_stroke: "X")
-        advanceFrameStroke
+        advanceFrameStroke!
       elsif self.frame_stroke == 2
         if isLastStrokeStrike?
           self.frames.where(frame_number: self.current_frame).update_all(second_stroke: "X")
         else
           self.frames.where(frame_number: self.current_frame).update_all(second_stroke: "/")
         end
-        advanceFrameStroke
+        advanceFrameStroke!
       elsif self.frame_stroke == 3
-        if isLastStrokeStrike? || isLastStrokeSpare?
-          self.frames.where(frame_number: self.current_frame).update_all(extra_stroke: "X")
-        else
+        if !isLastStrokeStrike? || !isLastStrokeSpare?
           self.frames.where(frame_number: self.current_frame).update_all(extra_stroke: "/")
+        else
+          self.frames.where(frame_number: self.current_frame).update_all(extra_stroke: "X")
         end
         endGame
       end
@@ -188,23 +188,19 @@ class Game < ActiveRecord::Base
   		frame = self.getFrame(self.current_frame)
   		if frame.first_stroke == "X"
   			return true
-  		else
-  			return false
   		end
   	elsif self.frame_stroke == 3 && self.current_frame == 10
   		frame = self.getFrame(self.current_frame)
   		if frame.second_stroke == "X"
   			return true
-  		else
-  			return false
   		end
   	elsif self.frame_stroke == 1
   		frame = self.getFrame(self.current_frame-1)
   		if frame.first_stroke == "X"
   			return true
-  		else
-  			return false
   		end
+    else
+      false
   	end
   end
 
@@ -213,16 +209,14 @@ class Game < ActiveRecord::Base
   		frame = self.getFrame(self.current_frame)
   		if frame.second_stroke == "/"
   			return true
-  		else
-  			return false
   		end
   	elsif self.frame_stroke == 1
   		frame = self.getFrame(self.current_frame-1)
   		if frame.second_stroke == "/"
   			return true
-  		else
-  			return false
   		end
+    else
+      false
   	end
   end
 
@@ -240,7 +234,7 @@ class Game < ActiveRecord::Base
   def calculateTotalScore!
   	if self.current_frame == 1 || (self.current_frame > 1 && self.frame_stroke > 1) || self.current_frame == 10
   		frame = self.getFrame(self.current_frame)
-  	elsif self.frame_stroke == 1 || (self.current_frame >= 2 && self.frame_stroke == 1)
+  	elsif self.frame_stroke == 1
   		frame = self.getFrame(self.current_frame-1)
   	end
   	frame.setScore!(self.bowled_pins)
