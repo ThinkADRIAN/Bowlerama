@@ -1,18 +1,6 @@
 class Frame < ActiveRecord::Base
 	belongs_to :game
 
-  # returns a relative frame to the current one
-  def getFrame(frames_to_shift)
-    adjustment_for_frame_indexing = 1
-    game.frames[game.current_frame + frames_to_shift - adjustment_for_frame_indexing]
-  end
-
-  # increments a frame's score
-  def updateFrameScore!(score)
-    self.frame_score += score
-    self.save
-  end
-
   def setScore!(bowled_pins)
     self.updateFrameScore!(bowled_pins)
 
@@ -37,6 +25,18 @@ class Frame < ActiveRecord::Base
     elsif getFrame(-1).isSpare? and second_stroke.nil?
       getFrame(-1).updateFrameScore!(bowled_pins)
     end
+  end
+
+  # returns a relative frame to the current one
+  def getFrame(frames_to_shift)
+    adjustment_for_frame_indexing = 1
+    game.frames[game.current_frame + frames_to_shift - adjustment_for_frame_indexing]
+  end
+
+  # increments a frame's score
+  def updateFrameScore!(score)
+    self.frame_score += score
+    self.save
   end
 
   def isStrike?
