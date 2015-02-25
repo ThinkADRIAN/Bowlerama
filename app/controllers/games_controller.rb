@@ -83,8 +83,13 @@ class GamesController < ApplicationController
 
       respond_to do |format|
         if @game.save
-          format.html { redirect_to @game, action: "show", notice: 'Game was successfully updated.' }
-          format.json { render :show, status: :ok, location: games_url }
+          if !@game.isGameOver
+            format.html { redirect_to @game, action: "show", notice: 'Game was successfully updated.  Your total score is ' + @game.total_score.to_s }
+            format.json { render :show, status: :ok, location: games_url }
+          else
+            format.html { redirect_to @game, action: "show", notice: 'Nice Game!  Your final score: ' + @game.total_score.to_s }
+            format.json { render :show, status: :ok, location: games_url }
+          end
         else
           format.html { render :edit }
           format.json { render json: @game.errors, status: :unprocessable_entity }
