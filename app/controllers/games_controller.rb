@@ -1,5 +1,5 @@
 class GamesController < ApplicationController
-  before_action :set_game, only: [:show, :edit, :update, :destroy, :bowl, :reset, :results]
+  before_action :set_game, only: [:show, :edit, :update, :destroy, :bowl, :reset, :results, :botbowl]
 
   # GET /games
   # GET /games.json
@@ -101,6 +101,31 @@ class GamesController < ApplicationController
       respond_to do |format|
           format.html { redirect_to @game, action: "show", notice: 'Nice Game!  Your final score: ' + @game.total_score.to_s }
           format.json { render :show, status: :ok, location: games_url }
+      end
+    end
+  end
+
+  def botbowl
+    if !@game.isGameOver
+
+      loop do
+
+        @game.rollBall
+        
+        @game.markScorecard
+        
+        break if @game.isGameOver
+      end
+
+      respond_to do |format|
+        if @game.save
+          #flash[:warning] = "Nice Game!  Your final score is #{@game.total_score.to_s}"
+          format.html { redirect_to results_game_url, action: "show" }
+          format.json { render :show, status: :ok, location: games_url }
+        else
+          format.html { render :edit }
+          format.json { render json: @game.errors, status: :unprocessable_entity }
+        end
       end
     end
   end
