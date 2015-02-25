@@ -16,13 +16,13 @@
           <ul class="nav navbar-nav">
             <li><a href="/">Home</a></li>
             <li><%= if !@game.nil?
-              if !@game.isGameOver 
+              if !@game.isGameOver? 
               link_to 'Bowl', bowl_game_path(@game), :method => :put
               else 
                 link_to 'Reset', reset_game_path(@game), :method => :put, data: { confirm: 'Are you sure?' }
               end end%></li>
             <li><%= if !@game.nil?
-              if !@game.isGameOver
+              if !@game.isGameOver?
               link_to 'Reset', reset_game_path(@game), :method => :put, data: { confirm: 'Are you sure?' }
               end end%>
         </div>

@@ -8,34 +8,34 @@ class Frame < ActiveRecord::Base
   end
 
   # increments a frame's score
-  def updateScore(score)
+  def updateFrameScore!(score)
     self.frame_score += score
     self.save
   end
 
-  def setScore(bowled_pins)
-    self.updateScore(bowled_pins)
+  def setScore!(bowled_pins)
+    self.updateFrameScore!(bowled_pins)
 
     # Handle 2 strikes in a row
     if getFrame(-1).isStrike? and getFrame(-2).isStrike?
 
       # First stroke of current frame
     	if second_stroke.nil?
-      	getFrame(-2).updateScore(bowled_pins)
+      	getFrame(-2).updateFrameScore!(bowled_pins)
       end
 
       # Second stroke of current frame
       if extra_stroke.nil?
-       getFrame(-1).updateScore(bowled_pins)
+       getFrame(-1).updateFrameScore!(bowled_pins)
      	end
 
     # Handle strike in previous frame on completion of current frame
     elsif getFrame(-1).isStrike? and extra_stroke.nil?
-      getFrame(-1).updateScore(bowled_pins)
+      getFrame(-1).updateFrameScore!(bowled_pins)
 
     # Handle spare in previous frame after first stroke of current frame
     elsif getFrame(-1).isSpare? and second_stroke.nil?
-      getFrame(-1).updateScore(bowled_pins)
+      getFrame(-1).updateFrameScore!(bowled_pins)
     end
   end
 

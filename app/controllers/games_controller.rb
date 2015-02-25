@@ -75,15 +75,15 @@ class GamesController < ApplicationController
   end
 
   def bowl
-    if !@game.isGameOver
+    if !@game.isGameOver?
 
       @game.rollBall
 
-      @game.markScorecard
+      @game.markScorecard!
 
       respond_to do |format|
         if @game.save
-          if !@game.isGameOver
+          if !@game.isGameOver?
             flash[:info] = "Game was successfully updated.  Your total score is #{@game.total_score.to_s}"
             format.html { redirect_to @game, action: "show" }
             format.json { render :show, status: :ok, location: games_url }
@@ -106,15 +106,15 @@ class GamesController < ApplicationController
   end
 
   def botbowl
-    if !@game.isGameOver
+    if !@game.isGameOver?
 
       loop do
 
         @game.rollBall
         
-        @game.markScorecard
+        @game.markScorecard!
         
-        break if @game.isGameOver
+        break if @game.isGameOver?
       end
 
       respond_to do |format|
@@ -131,7 +131,7 @@ class GamesController < ApplicationController
   end
 
   def reset
-    @game.clearFrames
+    @game.clearFrames!
 
     respond_to do |format|
       if @game.save

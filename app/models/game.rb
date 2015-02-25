@@ -68,7 +68,7 @@ class Game < ActiveRecord::Base
     return rand( start_value..finish_value )
   end
 
-  def advanceFrameStroke
+  def advanceFrameStroke!
     if self.frame_stroke == 1
       self.frame_stroke = 2
     elsif self.frame_stroke == 2 && self.current_frame == 10 
@@ -82,7 +82,7 @@ class Game < ActiveRecord::Base
     self.frame_stroke = -1
   end
 
-  def markScorecard
+  def markScorecard!
     # Handle Strikes and Spares for frames 1 through 9
     if self.current_frame < 10 && self.pins_left == 0
       if self.frame_stroke == 1
@@ -118,11 +118,11 @@ class Game < ActiveRecord::Base
     elsif self.current_frame == 10 && self.bowled_pins == 0
       if self.frame_stroke == 1
         self.frames.where(frame_number: self.current_frame).update_all(first_stroke: "-")
-        advanceFrameStroke
+        advanceFrameStroke!
       elsif self.frame_stroke == 2
         self.frames.where(frame_number: self.current_frame).update_all(second_stroke: "-")
         if isLastStrokeStrike?
-        	advanceFrameStroke
+        	advanceFrameStroke!
         else
         	endGame
         end
@@ -135,10 +135,10 @@ class Game < ActiveRecord::Base
     elsif self.current_frame < 10 && self.bowled_pins == 0
       if self.frame_stroke == 1
         self.frames.where(frame_number: self.current_frame).update_all(first_stroke: "-")
-        advanceFrameStroke
+        advanceFrameStroke!
       elsif self.frame_stroke == 2
         self.frames.where(frame_number: self.current_frame).update_all(second_stroke: "-")
-        advanceFrameStroke
+        advanceFrameStroke!
         incrementFrameCount!
       elsif self.frame_stroke == 3
         self.frames.where(frame_number: self.current_frame).update_all(extra_stroke: "-")
@@ -149,18 +149,18 @@ class Game < ActiveRecord::Base
     else
       if self.current_frame < 10 && self.frame_stroke == 1
         self.frames.where(frame_number: self.current_frame).update_all(first_stroke: self.bowled_pins)
-        advanceFrameStroke
+        advanceFrameStroke!
       elsif self.current_frame == 10 && self.frame_stroke == 1
         self.frames.where(frame_number: self.current_frame).update_all(first_stroke: self.bowled_pins)
-        advanceFrameStroke
+        advanceFrameStroke!
       elsif self.current_frame < 10 && self.frame_stroke == 2
         self.frames.where(frame_number: self.current_frame).update_all(second_stroke: self.bowled_pins)
-        advanceFrameStroke
+        advanceFrameStroke!
         incrementFrameCount!
       elsif self.current_frame == 10 && self.frame_stroke == 2
       	self.frames.where(frame_number: self.current_frame).update_all(second_stroke: self.bowled_pins)
     		if isLastStrokeStrike?
-    			advanceFrameStroke
+    			advanceFrameStroke!
     		else
     			endGame
     		end
@@ -169,7 +169,7 @@ class Game < ActiveRecord::Base
     		endGame
       end
     end
-    calculateTotalScore
+    calculateTotalScore!
   end
 
   def isLastStrokeStrike?
@@ -226,20 +226,20 @@ class Game < ActiveRecord::Base
     self.frames.where(frame_number: frame_to_check, extra_stroke: "/")
   end
 
-  def calculateTotalScore
+  def calculateTotalScore!
   	if self.current_frame == 1 || (self.current_frame > 1 && self.frame_stroke > 1) || self.current_frame == 10
   		frame = self.getFrame(self.current_frame)
   	elsif self.frame_stroke == 1 || (self.current_frame >= 2 && self.frame_stroke == 1)
   		frame = self.getFrame(self.current_frame-1)
   	end
-  	frame.setScore(self.bowled_pins)
+  	frame.setScore!(self.bowled_pins)
     # Calculate the sum of values in @frame_scores
     self.total_score = 0
     self.frames.each { |frame| self.total_score += frame.frame_score unless frame.frame_score.nil? }
     self.total_score
   end
 
-  def isGameOver
+  def isGameOver?
     self.frame_stroke == -1
   end
 
@@ -251,7 +251,7 @@ class Game < ActiveRecord::Base
   	}
   end
 
-  def clearFrames
+  def clearFrames!
     self.frames.clear
     self.init
     self.current_frame = 1
