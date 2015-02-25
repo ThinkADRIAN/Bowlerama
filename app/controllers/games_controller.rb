@@ -84,10 +84,12 @@ class GamesController < ApplicationController
       respond_to do |format|
         if @game.save
           if !@game.isGameOver
-            format.html { redirect_to @game, action: "show", notice: 'Game was successfully updated.  Your total score is ' + @game.total_score.to_s }
+            flash[:info] = "Game was successfully updated.  Your total score is #{@game.total_score.to_s}"
+            format.html { redirect_to @game, action: "show" }
             format.json { render :show, status: :ok, location: games_url }
           else
-            format.html { redirect_to @game, action: "show", notice: 'Nice Game!  Your final score: ' + @game.total_score.to_s }
+            flash[:warning] = "Nice Game!  Your final score is #{@game.total_score.to_s}"
+            format.html { redirect_to @game, action: "show" }
             format.json { render :show, status: :ok, location: games_url }
           end
         else
@@ -108,7 +110,8 @@ class GamesController < ApplicationController
 
     respond_to do |format|
       if @game.save
-        format.html { redirect_to root_url, action: "show", notice: 'Game was successfully reset.' }
+        flash[:info] = 'Game was successfully reset.'
+        format.html { redirect_to root_url, action: "show" }
         format.json { head :no_content }
       else
         format.html { render :edit }
