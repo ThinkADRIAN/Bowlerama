@@ -114,6 +114,8 @@ class GamesController < ApplicationController
         
         @game.markScorecard!
         
+        @game.save
+        
         break if @game.isGameOver?
       end
 
