@@ -121,8 +121,6 @@ class GamesController < ApplicationController
   end
 
   def results
-    @game.destroy
-    @game.save
   end
 
   private
