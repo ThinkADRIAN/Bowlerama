@@ -131,12 +131,12 @@ class GamesController < ApplicationController
   end
 
   def reset
-    @game.destroy
+    @game.clearFrames
 
     respond_to do |format|
       if @game.save
         flash[:info] = 'Game was successfully reset.'
-        format.html { redirect_to root_url, action: "show" }
+        format.html { redirect_to @game, action: "show" }
         format.json { head :no_content }
       else
         format.html { render :edit }
