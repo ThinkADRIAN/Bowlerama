@@ -1,0 +1,10 @@
+<!-- Main jumbotron for a primary marketing message or call to action -->
+<div class="jumbotron">
+	<center>
+	<h1>Thanks for playing Bowlerama</h1>
+	
+	<p><%= "Nice game! You scored a " + @game.total_score.to_s %></p>
+
+	<%= link_to "Start Game", games_path, :method => :post, class: "btn btn-primary btn-lg" %>
+</center>
+</div>

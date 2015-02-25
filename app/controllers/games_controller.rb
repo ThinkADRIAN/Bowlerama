@@ -1,5 +1,5 @@
 class GamesController < ApplicationController
-  before_action :set_game, only: [:show, :edit, :update, :destroy, :bowl, :reset]
+  before_action :set_game, only: [:show, :edit, :update, :destroy, :bowl, :reset, :results]
 
   # GET /games
   # GET /games.json
@@ -88,8 +88,8 @@ class GamesController < ApplicationController
             format.html { redirect_to @game, action: "show" }
             format.json { render :show, status: :ok, location: games_url }
           else
-            flash[:warning] = "Nice Game!  Your final score is #{@game.total_score.to_s}"
-            format.html { redirect_to @game, action: "show" }
+            #flash[:warning] = "Nice Game!  Your final score is #{@game.total_score.to_s}"
+            format.html { redirect_to results_game_url, action: "show" }
             format.json { render :show, status: :ok, location: games_url }
           end
         else
@@ -118,6 +118,11 @@ class GamesController < ApplicationController
         format.json { render json: @game.errors, status: :unprocessable_entity }
       end
     end
+  end
+
+  def results
+    @game.destroy
+    @game.save
   end
 
   private

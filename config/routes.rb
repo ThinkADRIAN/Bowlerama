@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   resources :games do
     member do
       put :bowl, :reset
+      get :results
     end
     resources :frames
   end
