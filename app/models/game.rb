@@ -416,7 +416,7 @@ class Game < ActiveRecord::Base
   end
 
   def calculateTotalScore!
-    self.total_score
+    self.total_score = self.rolls.inject{|sum,x| sum + x }
   end
 
   def getFrameScore(index)
