@@ -106,8 +106,10 @@ class Game < ActiveRecord::Base
       elsif self.frame_stroke == 2
         self.frames.where(frame_number: self.current_frame).update_all(second_stroke: "/")
       end
+
       self.frame_stroke = 1
       incrementFrameCount!
+      insertRoll(10)
 
     # Handle Strikes and Spares for frame 10
     elsif self.current_frame == 10 && self.pins_left == 0
@@ -129,6 +131,7 @@ class Game < ActiveRecord::Base
         end
         endGame
       end
+      insertRoll(10)
 
     # Handle Zero pins bowled in frame 10
     elsif self.current_frame == 10 && self.bowled_pins == 0
@@ -147,6 +150,8 @@ class Game < ActiveRecord::Base
         endGame
       end
     
+      insertRoll(0)
+
     # Handle Zero pins bowled in frames 1 through 9
     elsif self.current_frame < 10 && self.bowled_pins == 0
       if self.frame_stroke == 1
@@ -160,6 +165,8 @@ class Game < ActiveRecord::Base
         self.frames.where(frame_number: self.current_frame).update_all(extra_stroke: "-")
         endGame
       end
+
+      insertRoll(0)
 
     # Handle all other strokes
     else
@@ -184,12 +191,13 @@ class Game < ActiveRecord::Base
       	self.frames.where(frame_number: self.current_frame).update_all(extra_stroke: self.bowled_pins)
     		endGame
       end
+
+      insertRoll(self.bowled_pins)
+
     end
-    loadPinfallArray!
-    #convertPinfallArray!(calculateFrameScores!)
-    #calculateScores!(self.rolls)
+
     calculateFrameScores!
-    calculateTotalScore
+    calculateTotalScore!
   end
 
   def isLastStrokeStrike?
@@ -240,97 +248,6 @@ class Game < ActiveRecord::Base
     self.frames.where(frame_number: frame_to_check, extra_stroke: "/")
   end
 
-  def calculateTotalScore!
-  	if self.current_frame == 1 || (self.current_frame > 1 && self.frame_stroke > 1) || self.current_frame == 10
-  		frame = self.getFrame(self.current_frame)
-  	elsif self.frame_stroke == 1
-  		frame = self.getFrame(self.current_frame-1)
-  	end
-  	frame.setScore!(self.bowled_pins)
-    # Calculate the sum of values in @frame_scores
-    self.total_score = 0
-    self.frames.each { |frame| self.total_score += frame.frame_score unless frame.frame_score.nil? }
-    self.total_score
-  end  
-
-  def loadPinfallArray!
-    pinfall_array = []
-
-    i = 1
-    10.times { 
-      insert_frame = self.getFrame(i)
-
-      if insert_frame.first_stroke == ""
-        pinfall_array << 0
-      else
-        pinfall_array << insert_frame.first_stroke
-      end
-
-      if insert_frame.second_stroke == ""
-        pinfall_array << 0
-      else
-        pinfall_array << insert_frame.second_stroke
-      end
-
-      if i == 10
-        if insert_frame.extra_stroke == ""
-          pinfall_array << 0
-        else
-          pinfall_array << insert_frame.extra_stroke
-        end
-      end
-      i += 1
-    }
-    self.rolls = pinfall_array
-    self.save
-  end
-
-  def convertPinfallArray!(pinfall_array)
-    pinfall_array.map! { |i|
-      if (i == "X") || (i =="/")
-        10
-      else
-        i.to_i
-      end
-    }
-  end
-
-  def calculateScores!(pinfall_array)
-
-    # Initialize variables
-    i_frame = 0
-    @frame_scores = []
-
-    while i_frame <= 9 do 
-
-      # Load First Pinfall
-      @frame_scores[i_frame] = pinfall_array.shift
-
-      # Check for Strike
-      if @frame_scores[i_frame] == 10
-        # Add Next Pinfalls
-        @frame_scores[i_frame] = (10 + pinfall_array[0] + pinfall_array[1])
-
-      # Handle if not Strike
-      else
-        # Add Next Pinfall
-        @frame_scores[i_frame] = @frame_scores[i_frame] + pinfall_array.shift 
-
-        # Check for Strike
-        if @frame_scores[i_frame] == 10
-          @frame_scores[i_frame] = (10 + pinfall_array[0])
-        end
-      end
-
-      # Set Frame Score
-      i_frame +=1
-      self.frames.where(frame_number: i_frame ).update_all(frame_score: @frame_scores[i_frame-1])
-
-    end
-    # Set Total Score
-    self.total_score = @frame_scores.inject{|sum,x| sum + x }
-  end
-
   def isGameOver?
     self.frame_stroke == -1
   end
@@ -349,55 +266,164 @@ class Game < ActiveRecord::Base
     self.current_frame = 1
     self.frame_stroke = 1
     self.total_score = 0
-    self.save
-  end
 
-  def insertRoll(value)
-    self.rolls << value
+    self.rolls_will_change!
+    self.rolls = []
+    self.save!
+
+    self.save
   end
 
   def getNextRoll(index)
     self.rolls[index+1]
   end
 
-  def scoreOpenFrame(index)
-    frame_score = self.rolls[index].to_i + self.rolls[index+1].to_i
+  def getNextRollValue(this_frame_number, this_frame_stroke)
+    if this_frame_number < 10
+      if this_frame_stroke == 1
+        next_frame_value = getFrame(this_frame_number).second_stroke
+      elsif this_frame_stroke == 2
+        next_frame_value = getFrame(this_frame_number + 1).first_stroke
+      end
+    elsif this_frame_number == 10
+      if this_frame_stroke == 1
+        next_frame_value = getFrame(this_frame_number).second_stroke
+      elsif this_frame_stroke == 2
+        next_frame_value = getFrame(this_frame_number).extra_stroke
+      end
+    end
+    return next_frame_value
   end
 
-  def scoreStrike(index)
-    next_roll = getNextRoll(index).to_i
-    next_next_roll = getNextRoll(index+1).to_i
-
-    frame_score = 10 + next_roll + next_next_roll 
+  def convertRollValue(frame_value)
+    if (frame_value == "X") || (frame_value =="/")
+      10
+    elsif frame_value.nil?
+      0
+    else
+      i.to_i
+    end
   end
 
-  def scoreSpare(index)
-    next_roll = getNextRoll(index)
-
-    frame_score = 10 + next_roll.to_i
+  def insertRoll(value)
+    self.rolls_will_change!
+    self.rolls << value
+    self.save!
   end
 
-  def calculateFrameScores!
+  def loadRollValue
+    roll_value = getNextRollValue
+    roll_value = convertRollValue(roll_value)
+    insertRoll(roll_value)
+  end
+
+  def getRollValueFor(index)
+    if !self.rolls.any?
+      roll_value = self.rolls[index]
+    else
+      0
+    end
+  end
+
+  def scoreOpenFrame(this_frame_number)
+    if self.getFrame(this_frame_number).first_stroke.nil?
+      first_roll = 0
+    else
+      first_roll = self.getFrame(this_frame_number).first_stroke.to_i
+    end
+
+    if self.getFrame(this_frame_number).second_stroke.nil?
+      second_roll = 0
+    else
+      second_roll = self.getFrame(this_frame_number).second_stroke.to_i
+    end
+
+    frame_score = first_roll + second_roll 
+  end
+
+  def scoreStrike(this_frame_number,this_frame_stroke)
+    if self.getNextRollValue(this_frame_number, this_frame_stroke).nil?
+      next_roll_value = 0
+    else
+      next_roll_value = self.getNextRollValue(this_frame_number, this_frame_stroke)
+    end
+
+    if this_frame_stroke == 1
+      next_frame_stroke = 2
+      next_frame_number = this_frame_number
+    elsif this_frame_number < 10
+      if this_frame_stroke == 2
+        next_frame_stroke = 1
+        next_frame_number = this_frame_number + 1
+      end
+    elsif this_frame_number == 10
+      if this_frame_stroke == 2
+        next_frame_stroke = 3
+        next_frame_number = this_frame_number
+      end
+    end
+      
+    if self.getNextRollValue(next_frame_number, next_frame_stroke).nil?
+      next_next_roll_value = 0
+    else
+      next_next_roll_value = self.getNextRollValue(this_frame_number, this_frame_stroke)
+    end
+
+    frame_score = 10 + next_roll_value + next_next_roll_value
+  end
+
+  def scoreSpare(this_frame_number, this_frame_stroke)
+    if self.getNextRollValue(this_frame_number, this_frame_stroke).nil?
+      next_roll_value = 0
+    else
+      next_roll_value = self.getNextRollValue(this_frame_number, this_frame_stroke)
+    end
+
+    frame_score = 10 + next_roll_value
+  end
+
+  def calculateFrameScore!
     self.frames.each { |frame|
       index = convertFrameToIndex(frame)
 
       if frame.isStrike?
-        self.rolls[index] = self.scoreStrike(index)
+        frame_score = self.scoreStrike(index)
       elsif frame.isStrike?
-        self.rolls[index] = self.scoreSpare(index)
+        frame_score = self.scoreSpare(index)
       elsif frame.isOpenFrame?
-        self.rolls[index] = self.scoreOpenFrame(index)
+        frame_score = self.scoreOpenFrame(frame.frame_number)
       end
 
-      self.frames.where(frame_number: frame.frame_number ).update_all(frame_score: self.rolls[index])
+      self.frames.where(frame_number: frame.frame_number ).update_all(frame_score: frame_score)
     }
     self.save
   end
 
-  def calculateTotalScore
-    self.frames.each { |frame|
-      self.total_score = frame.frame_score.to_i
-    }
+  def calculateFrameScores!
+    
+    i = 1
+
+    while i <= self.current_frame
+      current_frame = self.getFrame(i)
+
+      if current_frame.isStrike?
+        frame_score = self.scoreStrike(current_frame.frame_number, self.current_frame_number)
+      elsif current_frame.isStrike?
+        frame_score = self.scoreSpare(current_frame.frame_number, self.current_frame_number)
+      elsif current_frame.isOpenFrame?
+        frame_score = self.scoreOpenFrame(current_frame.frame_number)
+      end
+
+      self.frames.where(frame_number: current_frame.frame_number ).update_all(frame_score: frame_score)
+
+      self.save
+
+      i += 1
+    end
+  end
+
+  def calculateTotalScore!
+    self.total_score = self.getFrame(self.current_frame).frame_score + self.getFrame(self.current_frame+1).frame_score
     self.save
   end
 
@@ -405,68 +431,68 @@ class Game < ActiveRecord::Base
     frame_number = frame.frame_number
     case frame_number
     when 1
-      if frame.second_stroke.nil?
+      if self.frame_stroke
         index = 0
-      elsif frame.extra_stroke.nil?
+      elsif !frame.second_stroke.nil?
         index = 1
       end
     when 2
-      if frame.second_stroke.nil?
+      if !frame.first_stroke.nil?
         index = 2
-      elsif frame.extra_stroke.nil?
+      elsif !frame.second_stroke.nil?
         index = 3
       end
     when 3
-      if frame.second_stroke.nil?
+      if !frame.first_stroke.nil?
         index = 4
-      elsif frame.extra_stroke.nil?
+      elsif !frame.second_stroke.nil?
         index = 5
       end
     when 4
-      if frame.second_stroke.nil?
+      if !frame.first_stroke.nil?
         index = 6
-      elsif frame.extra_stroke.nil?
+      elsif !frame.second_stroke.nil?
         index = 7
       end
     when 5
-      if frame.second_stroke.nil?
+      if !frame.first_stroke.nil?
         index = 8
-      elsif frame.extra_stroke.nil?
+      elsif !frame.second_stroke.nil?
         index = 9
       end
     when 6
-      if frame.second_stroke.nil?
+      if !frame.first_stroke.nil?
         index = 10
-      elsif frame.extra_stroke.nil?
+      elsif !frame.second_stroke.nil?
         index = 11
       end
     when 7
-      if frame.second_stroke.nil?
+      if !frame.first_stroke.nil?
         index = 12
-      elsif frame.extra_stroke.nil?
+      elsif !frame.second_stroke.nil?
         index = 13
       end
     when 8
-      if frame.second_stroke.nil?
+      if !frame.first_stroke.nil?
         index = 14
-      elsif frame.extra_stroke.nil?
+      elsif !frame.second_stroke.nil?
         index = 15
       end
     when 9
-      if frame.second_stroke.nil?
+      if !frame.first_stroke.nil?
         index = 16
-      elsif frame.extra_stroke.nil?
+      elsif !frame.second_stroke.nil?
         index = 17
       end
     when 10
-      if frame.second_stroke.nil?
+      if !frame.first_stroke.nil?
         index = 18
-      elsif frame.extra_stroke.nil?
+      elsif !frame.second_stroke.nil?
         index = 19
       else
         index = 20
       end
     end
-    return index
+    index = 21
   end
 end

@@ -33,7 +33,7 @@ ActiveRecord::Schema.define(version: 20150226100343) do
     t.integer  "current_frame"
     t.integer  "frame_stroke"
     t.integer  "total_score"
-    t.text     "rolls",         default: [], array: true
+    t.integer  "rolls",         default: [], array: true
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "bowled_pins"

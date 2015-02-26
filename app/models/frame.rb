@@ -51,7 +51,11 @@ class Frame < ActiveRecord::Base
   end
 
   def isOpenFrame?
-    if self.pins_left != 0
+    if self.pins_left.nil?
+      self.pins_left = 10
+    end
+
+    if self.pins_left > 0
       true
     else
       false
