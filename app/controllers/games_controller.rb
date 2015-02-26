@@ -81,6 +81,8 @@ class GamesController < ApplicationController
 
       @game.markScorecard!
 
+      @game.calculateGameDetails
+
       respond_to do |format|
         if @game.save
           if !@game.isGameOver?
@@ -113,6 +115,8 @@ class GamesController < ApplicationController
         @game.rollBall
         
         @game.markScorecard!
+
+        @game.calculateGameDetails
         
         @game.save
         

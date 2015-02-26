@@ -193,10 +193,6 @@ class Game < ActiveRecord::Base
       insertRoll(self.bowled_pins)
 
     end
-
-    calculateFrameScores!
-    assignFrameScores!
-    calculateTotalScore!
   end
 
   def isLastStrokeStrike?
@@ -476,5 +472,11 @@ class Game < ActiveRecord::Base
       end
       index += 1
     end
+  end
+
+  def calculateGameDetails
+    calculateFrameScores!
+    assignFrameScores!
+    calculateTotalScore!
   end
 end
