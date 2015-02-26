@@ -195,7 +195,8 @@ class Game < ActiveRecord::Base
     end
 
     calculateFrameScores!
-    #calculateTotalScore!
+    assignFrameScores!
+    calculateTotalScore!
   end
 
   def isLastStrokeStrike?
@@ -415,6 +416,65 @@ class Game < ActiveRecord::Base
   end
 
   def calculateTotalScore!
-    self.total_score = self.getFrame(self.current_frame).frame_score + self.getFrame(self.current_frame+1).frame_score
-    self.save
+    self.total_score
   end
+
+  def getFrameScore(index)
+    if index < 10
+      if self.rolls[index] == 10
+        if index.even?
+          # Handle Strike
+          return self.rolls[index] + subZeroForNil(self.rolls[index+1]) + subZeroForNil(self.rolls[index+2])
+        else index.odd?
+          # Handle Spare
+          return self.rolls[index] + subZeroForNil(self.rolls[index+1])
+        end
+      else
+        # Handle Open Frame
+        return self.rolls[index]
+      end
+    elsif index == 17
+      if self.rolls[index] == 10
+        # Handle Strike
+        return self.rolls[index] + subZeroForNil(self.rolls[index+1]) + subZeroForNil(self.rolls[index+2])
+      else
+        # Handle Open Frame
+        return self.rolls[index]
+      end
+    elsif index == 18
+      if self.rolls[index] == 10
+        if self.rolls[index-1] == 10
+          # Handle Strike
+          return self.rolls[index] + subZeroForNil(self.rolls[index+1]) + subZeroForNil(self.rolls[index+2])
+        else
+          # Handle Spare
+          return self.rolls[index] + subZeroForNil(self.rolls[index+1])
+        end
+      else
+        # Handle Open Frame
+        return self.rolls[index]
+      end
+    elsif index == 19
+      return self.rolls[index]
+    end
+  end
+
+  def assignFrameScores!
+    index = 0
+    frame_number = 0
+
+    while index <= 19
+      frame_score = getFrameScore(index)
+      self.frames.where(frame_number: frame_number).update_all(frame_score: frame_score)
+      self.save
+      if index.even? && index != 0
+        frame_number += 1
+      elsif index.odd? && index < 17
+        frame_number += 1
+      elsif index >= 17
+        frame_number = 10
+      end
+      index += 1
+    end
+  end
+end

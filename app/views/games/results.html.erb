@@ -26,7 +26,7 @@
 	  <tbody>
 	    <% frame_total = 0
 	      @game.frames.each do |frame| 
-	        frame_total += frame.frame_score%>
+	        frame_total = @game.subZeroForNil(frame.frame_score) %>
 	      <tr>
 	        <td><%= frame.frame_number %></td>
 	        <td><%= frame.first_stroke %></td>
