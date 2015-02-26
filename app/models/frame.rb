@@ -49,4 +49,12 @@ class Frame < ActiveRecord::Base
     self.second_stroke == "/" ||
     self.extra_stroke == "/"
   end
+
+  def isOpenFrame?
+    if self.pins_left != 0
+      true
+    else
+      false
+    end
+  end
 end

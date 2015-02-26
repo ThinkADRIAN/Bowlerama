@@ -4,6 +4,7 @@ class CreateGames < ActiveRecord::Migration
       t.integer :current_frame
       t.integer :frame_stroke
       t.integer :total_score
+      t.text :rolls, array: true, default: []
 
       t.timestamps
     end
