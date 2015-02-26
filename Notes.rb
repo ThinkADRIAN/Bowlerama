@@ -1,10 +1,12 @@
 Notes
 
-Current Feature:
-
-Upcoming Features:
-
 Current Challenge:
+	
+	Scoring
+
+Upcoming Challenges:
+	
+	Marks in the 10th Frame
 
 Resolved:
 
