@@ -1,5 +1,5 @@
 class GamesController < ApplicationController
-  before_action :set_game, only: [:show, :edit, :update, :destroy, :bowl, :reset, :results, :botbowl]
+  before_action :set_game, only: [:show, :edit, :update, :destroy, :bowl, :reset, :results, :botbowl, :botchoice]
 
   # GET /games
   # GET /games.json
@@ -114,7 +114,7 @@ class GamesController < ApplicationController
 
       loop do
 
-        @game.rollBall(0)
+        @game.rollBall(game_type)
         
         @game.markScorecard!
 
