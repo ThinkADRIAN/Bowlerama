@@ -19,30 +19,22 @@ class Game < ActiveRecord::Base
 
 	def rollBall
     self.resetPinsIfNecessary!
-
     # Handle first stroke for all frames
     if self.frame_stroke == 1 && self.current_frame <= 10
       roll_value = randomizePinCountAfterReset
-    
     # Handle second stroke for all frames
     elsif self.frame_stroke == 2 
-      
       # Frames 1 through 9
       if self.current_frame < 10
         roll_value = randomizePinCountForSecondThrow
-      
       # Frame 10
       elsif self.current_frame == 10
-        
         if isLastStrokeStrike?
           roll_value = randomizePinCountAfterReset
-        
         else
           roll_value = randomizePinCountForSecondThrow
         end
-
       end
-
   	# Handle third stroke for frame 10
 	  elsif self.frame_stroke == 3 && self.current_frame == 10
       if isLastStrokeStrike? || isLastStrokeSpare?
@@ -96,7 +88,7 @@ class Game < ActiveRecord::Base
     self.frame_stroke = -1
   end
 
-  def markScorecard!
+  def markScoreStrikeOrSpare
     # Handle Strikes and Spares for frames 1 through 9
     if self.current_frame < 10 && self.pins_left == 0
       if self.frame_stroke == 1
@@ -117,37 +109,39 @@ class Game < ActiveRecord::Base
       elsif self.frame_stroke == 2
         if isLastStrokeStrike?
           self.frames.where(frame_number: self.current_frame).update_all(second_stroke: "X")
-        else
+        elsif !isLastStrokeStrike?
           self.frames.where(frame_number: self.current_frame).update_all(second_stroke: "/")
         end
         advanceFrameStroke!
       elsif self.frame_stroke == 3
-        if !isLastStrokeStrike? || !isLastStrokeSpare?
-          self.frames.where(frame_number: self.current_frame).update_all(extra_stroke: "/")
-        else
+        if isLastStrokeStrike? || isLastStrokeSpare?
           self.frames.where(frame_number: self.current_frame).update_all(extra_stroke: "X")
+        elsif !isLastStrokeStrike? || !isLastStrokeSpare?
+          self.frames.where(frame_number: self.current_frame).update_all(extra_stroke: "/")
         end
         endGame
       end
       insertRoll(10)
+    end
+  end
 
+  def markScoreZero
     # Handle Zero pins bowled in frame 10
-    elsif self.current_frame == 10 && self.bowled_pins == 0
+    if self.current_frame == 10 && self.bowled_pins == 0
       if self.frame_stroke == 1
         self.frames.where(frame_number: self.current_frame).update_all(first_stroke: "-")
         advanceFrameStroke!
       elsif self.frame_stroke == 2
         self.frames.where(frame_number: self.current_frame).update_all(second_stroke: "-")
         if isLastStrokeStrike?
-        	advanceFrameStroke!
+          advanceFrameStroke!
         else
-        	endGame
+          endGame
         end
       elsif self.frame_stroke == 3
         self.frames.where(frame_number: self.current_frame).update_all(extra_stroke: "-")
         endGame
       end
-    
       insertRoll(0)
 
     # Handle Zero pins bowled in frames 1 through 9
@@ -163,35 +157,42 @@ class Game < ActiveRecord::Base
         self.frames.where(frame_number: self.current_frame).update_all(extra_stroke: "-")
         endGame
       end
-
       insertRoll(0)
+    end
+  end
 
-    # Handle all other strokes
-    else
-      if self.current_frame < 10 && self.frame_stroke == 1
+  def markScoreOpen
+    if self.current_frame < 10 && self.frame_stroke == 1
         self.frames.where(frame_number: self.current_frame).update_all(first_stroke: self.bowled_pins)
         advanceFrameStroke!
-      elsif self.current_frame == 10 && self.frame_stroke == 1
-        self.frames.where(frame_number: self.current_frame).update_all(first_stroke: self.bowled_pins)
+    elsif self.current_frame == 10 && self.frame_stroke == 1
+      self.frames.where(frame_number: self.current_frame).update_all(first_stroke: self.bowled_pins)
+      advanceFrameStroke!
+    elsif self.current_frame < 10 && self.frame_stroke == 2
+      self.frames.where(frame_number: self.current_frame).update_all(second_stroke: self.bowled_pins)
+      advanceFrameStroke!
+      incrementFrameCount!
+    elsif self.current_frame == 10 && self.frame_stroke == 2
+      self.frames.where(frame_number: self.current_frame).update_all(second_stroke: self.bowled_pins)
+      if isLastStrokeStrike?
         advanceFrameStroke!
-      elsif self.current_frame < 10 && self.frame_stroke == 2
-        self.frames.where(frame_number: self.current_frame).update_all(second_stroke: self.bowled_pins)
-        advanceFrameStroke!
-        incrementFrameCount!
-      elsif self.current_frame == 10 && self.frame_stroke == 2
-      	self.frames.where(frame_number: self.current_frame).update_all(second_stroke: self.bowled_pins)
-    		if isLastStrokeStrike?
-    			advanceFrameStroke!
-    		else
-    			endGame
-    		end
-    	elsif self.current_frame == 10 && self.frame_stroke == 3
-      	self.frames.where(frame_number: self.current_frame).update_all(extra_stroke: self.bowled_pins)
-    		endGame
+      else
+        endGame
       end
+    elsif self.current_frame == 10 && self.frame_stroke == 3
+      self.frames.where(frame_number: self.current_frame).update_all(extra_stroke: self.bowled_pins)
+      endGame
+    end
+    insertRoll(self.bowled_pins)
+  end
 
-      insertRoll(self.bowled_pins)
-
+  def markScorecard!
+    if self.pins_left == 0
+      markScoreStrikeOrSpare
+    elsif self.bowled_pins == 0
+      markScoreZero
+    else
+      markScoreOpen
     end
   end
 
@@ -267,11 +268,9 @@ class Game < ActiveRecord::Base
     self.current_frame = 1
     self.frame_stroke = 1
     self.total_score = 0
-
     self.rolls_will_change!
     self.rolls = []
     self.save!
-
     self.save
   end
 
@@ -377,23 +376,6 @@ class Game < ActiveRecord::Base
     next_roll_value = scoreBonus(next_frame_number, next_stroke_number, next_roll_value)
 
     frame_score = 10 + next_roll_value
-  end
-
-  def calculateFrameScoreFromRolls!
-    self.frames.each { |frame|
-      index = convertFrameToIndex(frame)
-
-      if frame.isStrike?
-        frame_score = self.scoreStrike(index)
-      elsif frame.isStrike?
-        frame_score = self.scoreSpare(index)
-      elsif frame.isOpenFrame?
-        frame_score = self.scoreOpenFrame(frame.frame_number)
-      end
-
-      self.frames.where(frame_number: frame.frame_number ).update_all(frame_score: frame_score)
-    }
-    self.save
   end
 
   def calculateFrameScores!
