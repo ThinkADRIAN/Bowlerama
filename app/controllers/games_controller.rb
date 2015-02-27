@@ -77,7 +77,7 @@ class GamesController < ApplicationController
   def bowl
     if !@game.isGameOver?
 
-      @game.rollBall
+      @game.rollBall(0)
 
       @game.markScorecard!
 
@@ -112,7 +112,7 @@ class GamesController < ApplicationController
 
       loop do
 
-        @game.rollBall
+        @game.rollBall(0)
         
         @game.markScorecard!
 

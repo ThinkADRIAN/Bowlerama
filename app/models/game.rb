@@ -17,30 +17,58 @@ class Game < ActiveRecord::Base
     self.save
   end
 
-	def rollBall
+	def rollBall(game_type)
+
+    #game_type = 0 Regular Game
+    #game_type = 1 Perfect Game
+    #game_type = 2 All Spares
+
+
     self.resetPinsIfNecessary!
-    # Handle first stroke for all frames
-    if self.frame_stroke == 1 && self.current_frame <= 10
-      roll_value = randomizePinCountAfterReset
-    # Handle second stroke for all frames
-    elsif self.frame_stroke == 2 
-      # Frames 1 through 9
-      if self.current_frame < 10
-        roll_value = randomizePinCountForSecondThrow
-      # Frame 10
-      elsif self.current_frame == 10
-        if isLastStrokeStrike?
-          roll_value = randomizePinCountAfterReset
+
+    if game_type == 0
+      # Handle first stroke for all frames
+      if self.frame_stroke == 1 && self.current_frame <= 10
+        roll_value = randomizePinCountAfterReset
+      # Handle second stroke for all frames
+      elsif self.frame_stroke == 2 
+        # Frames 1 through 9
+        if self.current_frame < 10
+          roll_value = randomizePinCountForSecondThrow
+        # Frame 10
+        elsif self.current_frame == 10
+          if isLastStrokeStrike?
+            roll_value = randomizePinCountAfterReset
+          else
+            roll_value = randomizePinCountForSecondThrow
+          end
+        end
+    	# Handle third stroke for frame 10
+  	  elsif self.frame_stroke == 3 && self.current_frame == 10
+        if isLastStrokeStrike? || isLastStrokeSpare?
+        	roll_value = randomizePinCountAfterReset
         else
           roll_value = randomizePinCountForSecondThrow
         end
       end
-  	# Handle third stroke for frame 10
-	  elsif self.frame_stroke == 3 && self.current_frame == 10
-      if isLastStrokeStrike? || isLastStrokeSpare?
-      	roll_value = randomizePinCountAfterReset
-      else
-        roll_value = randomizePinCountForSecondThrow
+    elsif game_type == 1
+      self.bowled_pins = 10
+      self.pins_left = 0
+      self.frames.where(frame_number: self.current_frame).update_all(pins_left: self.pins_left)
+      roll_value = 10
+    elsif game_type == 2
+      # Handle first stroke for all frames
+      if self.frame_stroke == 1
+        self.bowled_pins = rand(0..9)
+        self.pins_left = 10 - self.bowled_pins
+        self.frames.where(frame_number: self.current_frame).update_all(pins_left: self.pins_left)
+        roll_value = self.bowled_pins
+      # Handle second stroke for all frames
+      elsif self.frame_stroke 
+        self.bowled_pins = self.pins_left
+        self.pins_left = 0
+        self.frames.where(frame_number: self.current_frame).update_all(pins_left: self.pins_left)
+        roll_value = self.bowled_pins
       end
     end
 	end
@@ -96,11 +124,9 @@ class Game < ActiveRecord::Base
       elsif self.frame_stroke == 2
         self.frames.where(frame_number: self.current_frame).update_all(second_stroke: "/")
       end
-
       self.frame_stroke = 1
       incrementFrameCount!
       insertRoll(10)
-
     # Handle Strikes and Spares for frame 10
     elsif self.current_frame == 10 && self.pins_left == 0
       if self.frame_stroke == 1
@@ -109,14 +135,14 @@ class Game < ActiveRecord::Base
       elsif self.frame_stroke == 2
         if isLastStrokeStrike?
           self.frames.where(frame_number: self.current_frame).update_all(second_stroke: "X")
-        elsif !isLastStrokeStrike?
+        else
           self.frames.where(frame_number: self.current_frame).update_all(second_stroke: "/")
         end
         advanceFrameStroke!
       elsif self.frame_stroke == 3
         if isLastStrokeStrike? || isLastStrokeSpare?
           self.frames.where(frame_number: self.current_frame).update_all(extra_stroke: "X")
-        elsif !isLastStrokeStrike? || !isLastStrokeSpare?
+        else
           self.frames.where(frame_number: self.current_frame).update_all(extra_stroke: "/")
         end
         endGame
@@ -197,34 +223,39 @@ class Game < ActiveRecord::Base
   end
 
   def isLastStrokeStrike?
-  	if self.frame_stroke == 2 && self.current_frame == 10
-  		frame = self.getFrame(self.current_frame)
-  		if frame.first_stroke == "X"
-  			return true
-  		end
-  	elsif self.frame_stroke == 3 && self.current_frame == 10
-  		frame = self.getFrame(self.current_frame)
-  		if frame.second_stroke == "X"
-  			return true
-  		end
-  	elsif self.frame_stroke == 1
-  		frame = self.getFrame(self.current_frame-1)
-  		if frame.first_stroke == "X"
-  			return true
-  		end
+    if self.frame_stroke == 1
+      frame = self.getFrame(self.current_frame-1)
+      if frame.first_stroke == "X"
+        return true
+      end
+    elsif self.frame_stroke == 2
+      frame = self.getFrame(self.current_frame)
+      if frame.first_stroke == "X"
+        return true
+      end
+    elsif self.frame_stroke == 3 
+      frame = self.getFrame(self.current_frame)
+      if frame.second_stroke == "X"
+        return true
+      end
     else
       false
   	end
   end
 
   def isLastStrokeSpare?
-    if self.frame_stroke == 3 && self.current_frame == 10
+    if self.frame_stroke == 1
+      frame = self.getFrame(self.current_frame-1)
+      if frame.second_stroke == "/"
+        return true
+      end
+    elsif self.frame_stroke == 2
+      frame = self.getFrame(self.current_frame)
+      if frame.first_stroke == "/"
+        return true
+      end
+    elsif self.frame_stroke == 3
   		frame = self.getFrame(self.current_frame)
-  		if frame.second_stroke == "/"
-  			return true
-  		end
-  	elsif self.frame_stroke == 1
-  		frame = self.getFrame(self.current_frame-1)
   		if frame.second_stroke == "/"
   			return true
   		end
