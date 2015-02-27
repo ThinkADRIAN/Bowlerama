@@ -416,42 +416,47 @@ class Game < ActiveRecord::Base
   end
 
   def getFrameScore(index)
-    if index < 17
+    if index < 18
       if self.rolls[index] == 10
         if index.even?
           # Handle Strike
-          return self.rolls[index] + subZeroForNil(self.rolls[index+1]) + subZeroForNil(self.rolls[index+2])
+          return subZeroForNil(self.rolls[index]) + subZeroForNil(self.rolls[index+1]) + subZeroForNil(self.rolls[index+2])
         else index.odd?
           # Handle Spare
-          return self.rolls[index] + subZeroForNil(self.rolls[index+1])
+          return subZeroForNil(self.rolls[index]) + subZeroForNil(self.rolls[index+1])
         end
       else
-        # Handle Open Frame
-        return self.rolls[index]
-      end
-    elsif index == 17
-      if self.rolls[index] == 10
-        # Handle Strike
-        return self.rolls[index] + subZeroForNil(self.rolls[index+1]) + subZeroForNil(self.rolls[index+2])
-      else
-        # Handle Open Frame
-        return self.rolls[index]
+        # Handle Open Frame for First Stroke
+        if index.even?
+          return subZeroForNil(self.rolls[index])
+        # Handle Open Frame for Second Stroke
+        else index.odd?
+          return subZeroForNil(self.rolls[index]) + subZeroForNil(self.rolls[index-1])
+        end
       end
     elsif index == 18
       if self.rolls[index] == 10
+        # Handle Strike
+        return subZeroForNil(self.rolls[index]) + subZeroForNil(self.rolls[index+1]) + subZeroForNil(self.rolls[index+2])
+      else
+        # Handle Open Frame
+        return subZeroForNil(self.rolls[index])
+      end
+    elsif index == 19
+      if self.rolls[index] == 10
         if self.rolls[index-1] == 10
           # Handle Strike
-          return self.rolls[index] + subZeroForNil(self.rolls[index+1]) + subZeroForNil(self.rolls[index+2])
+          return subZeroForNil(self.rolls[index]) + subZeroForNil(self.rolls[index+1]) + subZeroForNil(self.rolls[index+2])
         else
           # Handle Spare
-          return self.rolls[index] + subZeroForNil(self.rolls[index+1])
+          return subZeroForNil(self.rolls[index]) + subZeroForNil(self.rolls[index+1])
         end
       else
         # Handle Open Frame
-        return self.rolls[index]
+        return subZeroForNil(self.rolls[index]) + subZeroForNil(self.rolls[index-1])
       end
-    elsif index == 19
-      return self.rolls[index]
+    elsif index == 21
+      return subZeroForNil(self.rolls[index]) + subZeroForNil(self.rolls[index-1]) + subZeroForNil(self.rolls[index-2])
     end
   end
 
