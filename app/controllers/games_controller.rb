@@ -108,6 +108,8 @@ class GamesController < ApplicationController
   end
 
   def botbowl
+    game_type = params[:game_type]
+
     if !@game.isGameOver?
 
       loop do
