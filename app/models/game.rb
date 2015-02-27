@@ -416,7 +416,7 @@ class Game < ActiveRecord::Base
   end
 
   def getFrameScore(index)
-    if index < 10
+    if index < 17
       if self.rolls[index] == 10
         if index.even?
           # Handle Strike
@@ -457,15 +457,13 @@ class Game < ActiveRecord::Base
 
   def assignFrameScores!
     index = 0
-    frame_number = 0
+    frame_number = 1
 
-    while index <= 19
+    while index <= 19 and frame_number <= self.current_frame
       frame_score = getFrameScore(index)
       self.frames.where(frame_number: frame_number).update_all(frame_score: frame_score)
       self.save
-      if index.even? && index != 0
-        frame_number += 1
-      elsif index.odd? && index < 17
+      if index.odd? && index < 17
         frame_number += 1
       elsif index >= 17
         frame_number = 10

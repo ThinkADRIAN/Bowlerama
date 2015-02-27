@@ -2,7 +2,7 @@ Notes
 
 Current Challenge:
 	
-	Scoring
+	Frame Score Works Only works for Spare or Showing Last Frame Throw
 
 Upcoming Challenges:
 	
