@@ -455,7 +455,7 @@ class Game < ActiveRecord::Base
         # Handle Open Frame
         return subZeroForNil(self.rolls[index]) + subZeroForNil(self.rolls[index-1])
       end
-    elsif index == 21
+    elsif index == 20
       return subZeroForNil(self.rolls[index]) + subZeroForNil(self.rolls[index-1]) + subZeroForNil(self.rolls[index-2])
     end
   end
@@ -464,13 +464,13 @@ class Game < ActiveRecord::Base
     index = 0
     frame_number = 1
 
-    while index <= 19 and frame_number <= self.current_frame
+    while index <= 20 and frame_number <= self.current_frame
       frame_score = getFrameScore(index)
       self.frames.where(frame_number: frame_number).update_all(frame_score: frame_score)
       self.save
-      if index.odd? && index < 17
+      if index.odd? && index < 18
         frame_number += 1
-      elsif index >= 17
+      elsif index >= 18
         frame_number = 10
       end
       index += 1
