@@ -121,7 +121,7 @@ class Game < ActiveRecord::Base
 
   def markScoreStrikeOrSpare
     # Handle Strikes and Spares for frames 1 through 9
-    if self.current_frame < 10 && self.pins_left == 0
+    if self.current_frame < 10
       if self.frame_stroke == 1
         self.frames.where(frame_number: self.current_frame).update_all(first_stroke: "X")
       elsif self.frame_stroke == 2
@@ -131,7 +131,7 @@ class Game < ActiveRecord::Base
       incrementFrameCount!
       insertRoll(10)
     # Handle Strikes and Spares for frame 10
-    elsif self.current_frame == 10 && self.pins_left == 0
+    elsif self.current_frame == 10
       if self.frame_stroke == 1
         self.frames.where(frame_number: self.current_frame).update_all(first_stroke: "X")
         advanceFrameStroke!
@@ -156,7 +156,7 @@ class Game < ActiveRecord::Base
 
   def markScoreZero
     # Handle Zero pins bowled in frame 10
-    if self.current_frame == 10 && self.bowled_pins == 0
+    if self.current_frame == 10
       if self.frame_stroke == 1
         self.frames.where(frame_number: self.current_frame).update_all(first_stroke: "-")
         advanceFrameStroke!
