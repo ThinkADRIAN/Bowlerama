@@ -19,15 +19,13 @@ class Game < ActiveRecord::Base
 
 	def rollBall(game_type)
 
-    #game_type = 0 Regular Game
-    #game_type = 1 Perfect Game
-    #game_type = 2 All Spares
-
     self.resetPinsIfNecessary!
 
+    # The Perfect Game
     if game_type == "perfect"
       roll_value = bowlStrike
-    elsif game_type == "spare"
+    # Only Miss First Frame and "Pickup" the remaining pins
+    elsif game_type == "pickup"
       # Handle first stroke for all frames
       if self.frame_stroke == 1
         self.bowled_pins = rand(0..9)
@@ -41,6 +39,7 @@ class Game < ActiveRecord::Base
         self.frames.where(frame_number: self.current_frame).update_all(pins_left: self.pins_left)
         roll_value = self.bowled_pins
       end
+    # Random Game
     else
       # Handle first stroke for all frames
       if self.frame_stroke == 1 && self.current_frame <= 10
