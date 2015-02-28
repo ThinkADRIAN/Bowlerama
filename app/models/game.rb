@@ -232,12 +232,12 @@ class Game < ActiveRecord::Base
         return true
       end
     elsif self.frame_stroke == 2
-      frame = self.getFrame(self.current_frame)
+      frame = self.getFrame(10)
       if frame.first_stroke == "X"
         return true
       end
     elsif self.frame_stroke == 3 
-      frame = self.getFrame(self.current_frame)
+      frame = self.getFrame(10)
       if frame.second_stroke == "X"
         return true
       end
