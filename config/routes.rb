@@ -3,8 +3,8 @@ Rails.application.routes.draw do
 
   resources :games do
     member do
-      put :bowl, :reset, :botbowl
-      get :results
+      put :bowl, :reset, :botbowl, :botchoice
+      get :results, :botchoice
     end
     resources :frames
   end

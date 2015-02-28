@@ -1,12 +1,10 @@
 <p>
-	<%= if !@game.isGameOver?
+  <%= if !@game.isGameOver?
       link_to 'Bowl', bowl_game_path(@game), class: "btn btn-xs btn-link", :method => :put, class: "btn btn-success"
-    #else
-    # link_to 'See Results', bowl_game_path(@game), class: "btn btn-xs btn-link", :method => :put, class: "btn btn-success", data: { confirm: 'Your Final Score: ' + @game.total_score.to_s } 
     end
   %>
   <%= if !@game.isGameOver?
-      link_to 'Bowl All Frames', botbowl_game_path(@game), class: "btn btn-xs btn-link", :method => :put, class: "btn btn-primary"
+      link_to 'Bot Bowl', botchoice_game_path(@game), class: "btn btn-xs btn-link", :method => :put, class: "btn btn-warning"
     end
   %>
   <%= if true #!@game.isGameOver?

@@ -1,0 +1,11 @@
+<div class="jumbotron">
+	<center>
+	<h1>Pick Your BolwerBot</h1>
+	
+	<p>Choose wisely...</p>
+
+	<%= link_to 'PerfectBot', botbowl_game_path(@game,:game_type => "perfect"), class: "btn btn-xs btn-link", :method => :put, class: "btn btn-default"%>
+	<%= link_to 'SpareBot', botbowl_game_path(@game,:game_type => "spare"), class: "btn btn-xs btn-link", :method => :put, class: "btn btn-default"%>
+	<%= link_to 'RandomBot', botbowl_game_path(@game), class: "btn btn-xs btn-link", :method => :put, class: "btn btn-default"%>
+	</center>
+</div>
