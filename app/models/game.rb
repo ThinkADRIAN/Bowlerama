@@ -146,12 +146,15 @@ class Game < ActiveRecord::Base
     if self.current_frame < 10
       if self.frame_stroke == 1
         self.frames.where(frame_number: self.current_frame).update_all(first_stroke: "X")
+        insertRoll(10)
+        insertRoll(0)
       elsif self.frame_stroke == 2
         self.frames.where(frame_number: self.current_frame).update_all(second_stroke: "/")
+        insertRoll(10)
       end
       self.frame_stroke = 1
       incrementFrameCount!
-      insertRoll(10)
+      #insertRoll(10)
     # Handle Strikes and Spares for frame 10
     elsif self.current_frame == 10
       if self.frame_stroke == 1
