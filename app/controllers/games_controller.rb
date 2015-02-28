@@ -16,8 +16,8 @@ class GamesController < ApplicationController
   def new
     @game = Game.new
 
-    #@game.bowled_pins = 0
-    #@game.pins_left = 10
+    @game.bowled_pins = 0
+    @game.pins_left = 10
     @game.current_frame = 1
     @game.frame_stroke = 1
     @game.total_score = 0
@@ -164,7 +164,7 @@ class GamesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def game_params
-      params.require(:game).permit(:current_frame, :frame_stroke, :total_score, 
+      params.require(:game).permit(:current_frame, :frame_stroke, :total_score,
         frames_attributes: [:first_stroke , :second_stroke, :extra_stroke])
     end
 end
