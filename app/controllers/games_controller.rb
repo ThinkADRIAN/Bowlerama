@@ -30,11 +30,10 @@ class GamesController < ApplicationController
   # POST /games
   # POST /games.json
   def create
-    #@game = Game.new(game_params)
     @game = Game.new
 
-    #@game.bowled_pins = 0
-    #@game.pins_left = 10
+    @game.bowled_pins = 0
+    @game.pins_left = 10
     @game.current_frame = 1
     @game.frame_stroke = 1
     @game.total_score = 0
