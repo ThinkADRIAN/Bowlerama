@@ -1,0 +1,32 @@
+<div>
+  <h1>Score Card</h1>
+
+  <table class="table table-striped table-hover ">
+    <thead>
+      <tr>
+        <th>Frame number</th>
+        <th>First stroke</th>
+        <th>Second stroke</th>
+        <th>Extra stroke</th>
+        <th>Frame Score</th>
+        <th>Total</th>
+        <th colspan="3"></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% frame_total = 0
+        @game.frames.each do |frame| 
+          frame_total += @game.subZeroForNil(frame.frame_score) %>
+        <tr>
+          <td><%= frame.frame_number %></td>
+          <td><%= frame.first_stroke %></td>
+          <td><%= frame.second_stroke %></td>
+          <td><%= frame.extra_stroke %></td>
+          <td><%= frame.frame_score %></td>
+          <td><%= frame_total %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

@@ -1,10 +1,12 @@
 Notes
 
-Current Feature:
-
-Upcoming Features:
-
 Current Challenge:
+	
+	Frame Score Works Only works for Spare or Showing Last Frame Throw
+
+Upcoming Challenges:
+	
+	Marks in the 10th Frame
 
 Resolved:
 
