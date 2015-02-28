@@ -21,26 +21,8 @@ class Game < ActiveRecord::Base
 
     self.resetPinsIfNecessary!
 
-    # The Perfect Game
-    if game_type == "perfect"
-      roll_value = bowlStrike
-    # Only Miss First Frame and "Pickup" the remaining pins
-    elsif game_type == "pickup"
-      # Handle first stroke for all frames
-      if self.frame_stroke == 1
-        self.bowled_pins = rand(0..9)
-        self.pins_left = 10 - self.bowled_pins
-        self.frames.where(frame_number: self.current_frame).update_all(pins_left: self.pins_left)
-        roll_value = self.bowled_pins
-      # Handle second stroke for all frames
-      elsif self.frame_stroke 
-        self.bowled_pins = self.pins_left
-        self.pins_left = 0
-        self.frames.where(frame_number: self.current_frame).update_all(pins_left: self.pins_left)
-        roll_value = self.bowled_pins
-      end
     # Random Game
-    else
+    if game_type == "random"
       # Handle first stroke for all frames
       if self.frame_stroke == 1 && self.current_frame <= 10
         roll_value = randomizePinCountAfterReset
@@ -57,13 +39,40 @@ class Game < ActiveRecord::Base
             roll_value = randomizePinCountForSecondThrow
           end
         end
-    	# Handle third stroke for frame 10
-  	  elsif self.frame_stroke == 3 && self.current_frame == 10
+      # Handle third stroke for frame 10
+      elsif self.frame_stroke == 3 && self.current_frame == 10
         if isLastStrokeStrike? || isLastStrokeSpare?
-        	roll_value = randomizePinCountAfterReset
+          roll_value = randomizePinCountAfterReset
         else
           roll_value = randomizePinCountForSecondThrow
         end
+      end
+    
+    # The Perfect Game
+    elsif game_type == "perfect"
+      roll_value = bowlStrike
+    
+    # Only Miss First Frame and "Pickup" the remaining pins
+    elsif game_type == "pickup"
+      if self.frame_stroke == 1
+        self.bowled_pins = rand(0..9)
+        self.pins_left = 10 - self.bowled_pins
+        self.frames.where(frame_number: self.current_frame).update_all(pins_left: self.pins_left)
+        roll_value = self.bowled_pins
+      elsif self.frame_stroke == 2
+        roll_value = bowlSpare
+      else
+        roll_value = bowlStrike
+      end
+
+    # Scorecard with -, /, X
+    elsif game_type == "marker"
+      if self.frame_stroke == 1 && self.current_frame.odd?
+        roll_value = bowlZero
+      elsif self.frame_stroke == 2 && self.current_frame < 10
+        roll_value = bowlSpare
+      else
+        roll_value = bowlStrike
       end
     end
 	end
@@ -82,6 +91,20 @@ class Game < ActiveRecord::Base
   def bowlStrike
     self.bowled_pins = self.pins_left
     self.pins_left = 0
+    self.frames.where(frame_number: self.current_frame).update_all(bowled_pins: self.bowled_pins, pins_left: self.pins_left)
+    return self.bowled_pins
+  end
+
+  def bowlSpare
+    self.bowled_pins = self.pins_left
+    self.pins_left = 0
+    self.frames.where(frame_number: self.current_frame).update_all(bowled_pins: self.bowled_pins, pins_left: self.pins_left)
+    return self.bowled_pins
+  end
+
+  def bowlZero
+    self.bowled_pins = 0
+    self.pins_left = 10 - self.bowled_pins
     self.frames.where(frame_number: self.current_frame).update_all(bowled_pins: self.bowled_pins, pins_left: self.pins_left)
     return self.bowled_pins
   end

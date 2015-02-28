@@ -77,7 +77,7 @@ class GamesController < ApplicationController
   def bowl
     if !@game.isGameOver?
 
-      @game.rollBall(0)
+      @game.rollBall("random")
 
       @game.markScorecard!
 
