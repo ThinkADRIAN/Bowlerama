@@ -292,17 +292,6 @@ class Game < ActiveRecord::Base
   	end
   end
 
-  def isStrike?(frame_to_check)
-    self.frames.where(frame_number: frame_to_check, first_stroke: "X") ||
-    self.frames.where(frame_number: frame_to_check, second_stroke: "X") ||
-    self.frames.where(frame_number: frame_to_check, extra_stroke: "X")
-  end
-
-  def isSpare?(frame_to_check)
-    self.frames.where(frame_number: frame_to_check, second_stroke: "/") || 
-    self.frames.where(frame_number: frame_to_check, extra_stroke: "/")
-  end
-
   def isGameOver?
     self.frame_stroke == -1
   end
@@ -333,16 +322,6 @@ class Game < ActiveRecord::Base
     self.save
   end
 
-  def convertRollValue(frame_value)
-    if (frame_value == "X") || (frame_value =="/")
-      10
-    elsif frame_value.nil?
-      0
-    else
-      i.to_i
-    end
-  end
-
   def subZeroForNil( value )
     if value.nil?
       0
@@ -351,179 +330,9 @@ class Game < ActiveRecord::Base
     end
   end
 
-  def getNextRollValue(this_frame_number, this_frame_stroke)
-    if this_frame_number < 10
-      if this_frame_stroke == 1
-        next_frame_value = getFrame(this_frame_number).second_stroke
-      elsif this_frame_stroke == 2
-        next_frame_value = getFrame(this_frame_number + 1).first_stroke
-      end
-    elsif this_frame_number == 10
-      if this_frame_stroke == 1
-        next_frame_value = getFrame(this_frame_number).second_stroke
-      elsif this_frame_stroke == 2
-        next_frame_value = getFrame(this_frame_number).extra_stroke
-      end
-    end
-    return next_frame_value
-  end
-    
-  def getNextFrameNumber(this_frame_number, this_frame_stroke)
-    if this_frame_stroke == 1
-      next_frame_number = this_frame_number
-    elsif this_frame_number < 10
-      if this_frame_stroke == 2
-        next_frame_number = this_frame_number + 1
-      end
-    elsif this_frame_number == 10
-      if this_frame_stroke == 2
-        next_frame_number = this_frame_number
-      end
-    end
-  end
-
-  def getNextStrokeNumber(this_frame_number, this_frame_stroke)
-    if this_frame_stroke == 1
-      next_frame_stroke = 2
-    elsif this_frame_number < 10
-      if this_frame_stroke == 2
-        next_frame_stroke = 1
-      end
-    elsif this_frame_number == 10
-      if this_frame_stroke == 2
-        next_frame_stroke = 3
-      end
-    end
-  end
-
-  def scoreOpenFrame(this_frame_number)
-    first_roll = subZeroForNil(self.getFrame(this_frame_number).first_stroke).to_i
-    second_roll = subZeroForNil(self.getFrame(this_frame_number).second_stroke).to_i
-    frame_score = first_roll + second_roll 
-  end
-
-  def scoreBonus(this_frame_number,this_frame_stroke, this_roll_value)
-    if this_roll_value = "X"
-      this_roll_value = scoreStrike(this_frame_number, this_frame_stroke)
-    elsif this_roll_value = "/"
-      this_roll_value = scoreSpare(this_frame_number, this_frame_stroke)
-    else
-      this_roll_value = scoreOpenFrame(this_frame_number)
-    end
-    this_roll_value = convertRollValue(this_roll_value)
-  end
-
-  def scoreStrike(this_frame_number,this_frame_stroke)
-    next_roll_value = subZeroForNil(self.getNextRollValue(this_frame_number, this_frame_stroke))
-
-    next_frame_number = getNextFrameNumber(this_frame_number, this_frame_stroke)
-    next_stroke_number = getNextStrokeNumber(this_frame_number, this_frame_stroke)
-      
-    next_next_roll_value = subZeroForNil(self.getNextRollValue(next_frame_number, next_stroke_number))
-
-    next_roll_value = scoreBonus(next_frame_number, next_stroke_number, next_roll_value)
-
-    frame_score = 10 + next_roll_value + next_next_roll_value
-  end
-
-  def scoreSpare(this_frame_number, this_frame_stroke)
-    next_roll_value = subZeroForNil(self.getNextRollValue(this_frame_number, this_frame_stroke))
-
-    next_frame_number = getNextFrameNumber(this_frame_number, this_frame_stroke)
-    next_stroke_number = getNextStrokeNumber(this_frame_number, this_frame_stroke)
-
-    next_roll_value = scoreBonus(next_frame_number, next_stroke_number, next_roll_value)
-
-    frame_score = 10 + next_roll_value
-  end
-
-  def calculateFrameScores!
-    current_frame = getFrame(self.current_frame)
-    
-    if current_frame.isStrike?
-      frame_score = self.scoreStrike(current_frame.frame_number, self.frame_stroke)
-    elsif current_frame.isSpare?
-      frame_score = self.scoreSpare(current_frame.frame_number, self.frame_stroke)
-    elsif current_frame.isOpenFrame?
-      frame_score = self.scoreOpenFrame(current_frame.frame_number)
-    end
-    
-    self.frames.where(frame_number: current_frame.frame_number ).update_all(frame_score: frame_score)
-    self.save
-  end
-
-  def calculateTotalScore!
-    self.total_score = self.rolls.inject{|sum,x| sum + x }
-  end
-
-  def getFrameScore(index)
-    if index < 18
-      if self.rolls[index] == 10
-        if index.even?
-          # Handle Strike
-          return subZeroForNil(self.rolls[index]) + subZeroForNil(self.rolls[index+1]) + subZeroForNil(self.rolls[index+2])
-        else index.odd?
-          # Handle Spare
-          return subZeroForNil(self.rolls[index]) + subZeroForNil(self.rolls[index+1])
-        end
-      else
-        # Handle Open Frame for First Stroke
-        if index.even?
-          return subZeroForNil(self.rolls[index])
-        # Handle Open Frame for Second Stroke
-        else index.odd?
-          return subZeroForNil(self.rolls[index]) + subZeroForNil(self.rolls[index-1])
-        end
-      end
-    elsif index == 18
-      if self.rolls[index] == 10
-        # Handle Strike
-        return subZeroForNil(self.rolls[index]) + subZeroForNil(self.rolls[index+1]) + subZeroForNil(self.rolls[index+2])
-      else
-        # Handle Open Frame
-        return subZeroForNil(self.rolls[index])
-      end
-    elsif index == 19
-      if self.rolls[index] == 10
-        if self.rolls[index-1] == 10
-          # Handle Strike
-          return subZeroForNil(self.rolls[index]) + subZeroForNil(self.rolls[index+1]) + subZeroForNil(self.rolls[index+2])
-        else
-          # Handle Spare
-          return subZeroForNil(self.rolls[index]) + subZeroForNil(self.rolls[index+1])
-        end
-      else
-        # Handle Open Frame
-        return subZeroForNil(self.rolls[index]) + subZeroForNil(self.rolls[index-1])
-      end
-    elsif index == 20
-      return subZeroForNil(self.rolls[index]) + subZeroForNil(self.rolls[index-1]) + subZeroForNil(self.rolls[index-2])
-    end
-  end
-
-  def assignFrameScores!
-    index = 0
-    frame_number = 1
-
-    while index <= 20 and frame_number <= self.current_frame
-      frame_score = getFrameScore(index)
-      self.frames.where(frame_number: frame_number).update_all(frame_score: frame_score)
-      self.save
-      if index.odd? && index < 18
-        frame_number += 1
-      elsif index >= 18
-        frame_number = 10
-      end
-      index += 1
-    end
-  end
-
   def calculateGameDetails
-    # calculateFrameScores!
-    # assignFrameScores!
-    # calculateTotalScore!
-    setFrameScoreArray
-    #calculateArrayScores
+    setFrameScores!
+    calculateTotalScore!
   end
 
   def isStrikeWithArrayIndex?(index)
@@ -623,7 +432,7 @@ class Game < ActiveRecord::Base
     end
   end
 
-  def setFrameScoreArray
+  def setFrameScores!
     index = 0
     frame_number = 1
 
@@ -649,25 +458,12 @@ class Game < ActiveRecord::Base
     end
   end
 
-  def calculateArrayScores
+  def calculateTotalScore!
     score = 0
-    index = 0
-
-    while index < 20
-      if isStrikeWithArrayIndex?(index)
-        if isStrikeWithArrayIndex?(index+1) && isStrikeWithArrayIndex?(index+2)
-          score += 30
-        else
-          score += subZeroForNil(self.rolls[index]) + subZeroForNil(self.rolls[index+1]) + subZeroForNil(self.rolls[index+2])
-        end
-      elsif isSpareWithArrayIndex?(index)
-        score += subZeroForNil(self.rolls[index]) + subZeroForNil(self.rolls[index+1])
-      else
-        score += subZeroForNil(self.rolls[index])
-      end
-      index += 1
+    self.frames.each do |frame| 
+      score += self.subZeroForNil(frame.frame_score)
     end
-
     self.total_score = score
+    self.save
   end
 end
