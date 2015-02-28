@@ -573,26 +573,25 @@ class Game < ActiveRecord::Base
           return 10 + subZeroForNil(self.rolls[index+2]) + subZeroForNil(self.rolls[index+3])
         end
       elsif index == 18
-        if isStrikeWithArrayIndex?(index+1) && isStrikeWithArrayIndex?(index+2)
-          return 30
-        else
-          return 10 + subZeroForNil(self.rolls[index+1]) + subZeroForNil(self.rolls[index+2])
-        end
+        return 10 + subZeroForNil(self.rolls[index+1]) + subZeroForNil(self.rolls[index+2])
       elsif index == 19
-        if isStrikeWithArrayIndex?(index+1)
-          return 30
+        if isStrikeWithArrayIndex?(index-1)
+          return 20
         else
-          return 10 + subZeroForNil(self.rolls[index+1])
+          return 10
         end
       elsif index == 20
         # XXX
-        if isStrikeWithArrayIndex?(18) && isStrikeWithArrayIndex?(19) && isStrikeWithArrayIndex?(20)
+        if isStrikeWithArrayIndex?(18) && isStrikeWithArrayIndex?(19)
           return 30
         # XX#
-        elsif isStrikeWithArrayIndex?(18) && isStrikeWithArrayIndex?(19)
+        elsif isStrikeWithArrayIndex?(18) && isStrikeWithArrayIndex?(19) && self.rolls[20] < 10
           return 20 + subZeroForNil(self.rolls[20])
         # X#/
-        elsif isStrikeWithArrayIndex?(18) && isSpareWithArrayIndex?(20)
+        elsif isStrikeWithArrayIndex?(18) && self.rolls[19] < 10 && isSpareWithArrayIndex?(20)
+          return 20
+        # #/X
+        elsif self.rolls[18] < 10 && isSpareWithArrayIndex?(19)
           return 20
         # X##
         else 
@@ -603,11 +602,7 @@ class Game < ActiveRecord::Base
       if index < 19
         return subZeroForNil(self.rolls[index]) + subZeroForNil(self.rolls[index+1])
       elsif index == 19
-        if isStrikeWithArrayIndex?(20)
-          return 20
-        else
-          return 10 + subZeroForNil(self.rolls[20])
-        end
+        return 10
       elsif index == 20
          return 20
       end 
@@ -617,6 +612,10 @@ class Game < ActiveRecord::Base
       else
         return self.rolls[18]
       end
+    elsif index == 19
+      return subZeroForNil(self.rolls[18]) + subZeroForNil(self.rolls[19])
+    elsif index == 20
+      return subZeroForNil(self.rolls[18]) + subZeroForNil(self.rolls[19]) + subZeroForNil(self.rolls[20])
     elsif index.even?
       return subZeroForNil(self.rolls[index])
     elsif index.odd?
