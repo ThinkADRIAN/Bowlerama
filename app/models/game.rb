@@ -519,8 +519,156 @@ class Game < ActiveRecord::Base
   end
 
   def calculateGameDetails
-    calculateFrameScores!
-    assignFrameScores!
-    #calculateTotalScore!
+    # calculateFrameScores!
+    # assignFrameScores!
+    # calculateTotalScore!
+    setFrameScoreArray
+    #calculateArrayScores
+  end
+
+  def isStrikeWithArrayIndex?(index)
+    if self.rolls[index] == 10
+      if index <= 18 && (index.even? || index == 0)
+        return true
+      elsif index == 19 && self.rolls[18] == 10
+        return true
+      elsif index == 20 && self.rolls[19] == 10
+        return true
+      end
+    else
+      false
+    end
+  end
+
+  def isSpareWithArrayIndex?(index)
+    if self.rolls[index] == 10
+      if index < 18 && index.odd?
+        return true
+      elsif index == 19 && self.rolls[18] < 10
+        return true
+      elsif index == 20 && self.rolls[19] < 10
+        return true
+      end
+    else
+      false
+    end
+  end
+
+  def getFrameScoreArray(index, frame_number)
+    if isStrikeWithArrayIndex?(index)
+      if index < 15
+        if isStrikeWithArrayIndex?(index+2) && isStrikeWithArrayIndex?(index+4)
+          return 30
+        elsif isStrikeWithArrayIndex?(index+2) && isSpareWithArrayIndex?(index+3)
+          return 20
+        else
+          return 10 + subZeroForNil(self.rolls[index+2]) + subZeroForNil(self.rolls[index+3])
+        end
+      elsif index == 16
+        if isStrikeWithArrayIndex?(index+2) && isStrikeWithArrayIndex?(index+3)
+          return 30
+        elsif isStrikeWithArrayIndex?(index+2) && isSpareWithArrayIndex?(index+3)
+          return 20
+        else
+          return 10 + subZeroForNil(self.rolls[index+2]) + subZeroForNil(self.rolls[index+3])
+        end
+      elsif index == 18
+        if isStrikeWithArrayIndex?(index+1) && isStrikeWithArrayIndex?(index+2)
+          return 30
+        else
+          return 10 + subZeroForNil(self.rolls[index+1]) + subZeroForNil(self.rolls[index+2])
+        end
+      elsif index == 19
+        if isStrikeWithArrayIndex?(index+1)
+          return 30
+        else
+          return 10 + subZeroForNil(self.rolls[index+1])
+        end
+      elsif index == 20
+        # XXX
+        if isStrikeWithArrayIndex?(18) && isStrikeWithArrayIndex?(19) && isStrikeWithArrayIndex?(20)
+          return 30
+        # XX#
+        elsif isStrikeWithArrayIndex?(18) && isStrikeWithArrayIndex?(19)
+          return 20 + subZeroForNil(self.rolls[20])
+        # X#/
+        elsif isStrikeWithArrayIndex?(18) && isSpareWithArrayIndex?(20)
+          return 20
+        # X##
+        else 
+          return 10 + self.rolls[19] + self.rolls[20]
+        end
+      end
+    elsif isSpareWithArrayIndex?(index)
+      if index < 19
+        return subZeroForNil(self.rolls[index]) + subZeroForNil(self.rolls[index+1])
+      elsif index == 19
+        if isStrikeWithArrayIndex?(20)
+          return 20
+        else
+          return 10 + subZeroForNil(self.rolls[20])
+        end
+      elsif index == 20
+         return 20
+      end 
+    elsif index == 18
+      if isStrikeWithArrayIndex?(18)
+        return 10
+      else
+        return self.rolls[18]
+      end
+    elsif index.even?
+      return subZeroForNil(self.rolls[index])
+    elsif index.odd?
+      return subZeroForNil(self.rolls[index]) + subZeroForNil(self.rolls[index-1])
+    end
+  end
+
+  def setFrameScoreArray
+    index = 0
+    frame_number = 1
+
+    while index <= 20 && frame_number <= 10
+      frame_score = getFrameScoreArray(index, frame_number)
+      self.frames.where(frame_number: frame_number).update_all(frame_score: frame_score)
+      self.save
+      if isStrikeWithArrayIndex?(index)
+        if index < 17
+          index += 2
+          frame_number += 1
+        elsif index >= 17
+          index += 1
+        end
+      elsif index.odd?
+        if index < 18
+          frame_number += 1
+        end
+        index += 1
+      elsif index.even?
+        index += 1
+      end
+    end
+  end
+
+  def calculateArrayScores
+    score = 0
+    index = 0
+
+    while index < 20
+      if isStrikeWithArrayIndex?(index)
+        if isStrikeWithArrayIndex?(index+1) && isStrikeWithArrayIndex?(index+2)
+          score += 30
+        else
+          score += subZeroForNil(self.rolls[index]) + subZeroForNil(self.rolls[index+1]) + subZeroForNil(self.rolls[index+2])
+        end
+      elsif isSpareWithArrayIndex?(index)
+        score += subZeroForNil(self.rolls[index]) + subZeroForNil(self.rolls[index+1])
+      else
+        score += subZeroForNil(self.rolls[index])
+      end
+      index += 1
+    end
+
+    self.total_score = score
   end
 end
