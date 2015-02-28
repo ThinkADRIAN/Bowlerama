@@ -136,14 +136,14 @@ class Game < ActiveRecord::Base
         self.frames.where(frame_number: self.current_frame).update_all(first_stroke: "X")
         advanceFrameStroke!
       elsif self.frame_stroke == 2
-        if isLastStrokeStrike?
+        if self.rolls.last == 10
           self.frames.where(frame_number: self.current_frame).update_all(second_stroke: "X")
         else
           self.frames.where(frame_number: self.current_frame).update_all(second_stroke: "/")
         end
         advanceFrameStroke!
       elsif self.frame_stroke == 3
-        if isLastStrokeStrike? || isLastStrokeSpare?
+        if self.rolls.last == 10
           self.frames.where(frame_number: self.current_frame).update_all(extra_stroke: "X")
         else
           self.frames.where(frame_number: self.current_frame).update_all(extra_stroke: "/")
