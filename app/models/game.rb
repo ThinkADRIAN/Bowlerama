@@ -85,6 +85,13 @@ class Game < ActiveRecord::Base
       else
         roll_value = bowlStrike
       end
+
+    # No pins bowled ever
+    elsif game_type == "gutter"
+      self.bowled_pins = 0
+      self.pins_left = 10
+      self.frames.where(frame_number: self.current_frame).update_all(pins_left: self.pins_left)
+      roll_value = self.bowled_pins
     end
 	end
 
