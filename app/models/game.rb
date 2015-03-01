@@ -1,23 +1,23 @@
 class Game < ActiveRecord::Base
-	has_many :frames, -> { order "frame_number asc" }, :dependent => :destroy
-	accepts_nested_attributes_for :frames
+  has_many :frames, -> { order "frame_number asc" }, :dependent => :destroy
+  accepts_nested_attributes_for :frames
 
-	after_create :init
+  after_create :init
 
   def init
-  	i = 1
+    i = 1
     10.times { 
-    	frame = Frame.new
-    	frame.frame_number = i
-    	frame.frame_score = 0
-    	frame.save
-    	self.frames << frame
-    	i += 1
+      frame = Frame.new
+      frame.frame_number = i
+      frame.frame_score = 0
+      frame.save
+      self.frames << frame
+      i += 1
     }
     self.save
   end
 
-	def rollBall(game_type)
+  def rollBall(game_type)
 
     self.resetPinsIfNecessary!
 
@@ -93,9 +93,9 @@ class Game < ActiveRecord::Base
       self.frames.where(frame_number: self.current_frame).update_all(bowled_pins: self.bowled_pins, pins_left: self.pins_left)
       roll_value = self.bowled_pins
     end
-	end
+  end
 
-	def incrementFrameCount!
+  def incrementFrameCount!
      self.current_frame += 1
   end
 
@@ -149,7 +149,7 @@ class Game < ActiveRecord::Base
     if self.frame_stroke == 1
       self.frame_stroke = 2
     elsif self.frame_stroke == 2 && self.current_frame == 10 
-    	self.frame_stroke = 3
+      self.frame_stroke = 3
     elsif self.frame_stroke == 2 && self.current_frame < 10
       self.frame_stroke = 1
     end
@@ -286,7 +286,7 @@ class Game < ActiveRecord::Base
       end
     else
       false
-  	end
+    end
   end
 
   def isLastStrokeSpare?
@@ -301,13 +301,13 @@ class Game < ActiveRecord::Base
         return true
       end
     elsif self.frame_stroke == 3
-  		frame = self.getFrame(self.current_frame)
-  		if frame.second_stroke == "/"
-  			return true
-  		end
+      frame = self.getFrame(self.current_frame)
+      if frame.second_stroke == "/"
+        return true
+      end
     else
       false
-  	end
+    end
   end
 
   def isGameOver?
@@ -321,11 +321,11 @@ class Game < ActiveRecord::Base
   end
 
   def getFrame(frame_number)
-  	self.frames.each { |frame| 
-  		if frame.frame_number == frame_number
-  			return frame
-  		end
-  	}
+    self.frames.each { |frame| 
+      if frame.frame_number == frame_number
+        return frame
+      end
+    }
   end
 
   def clearFrames!
@@ -481,7 +481,9 @@ class Game < ActiveRecord::Base
     score = 0
     self.frames.each do |frame|
       score += self.subZeroForNil(frame.frame_score)
+      debugger
     end
+
     self.total_score = score
     self.save
   end
