@@ -4,12 +4,16 @@
     end
   %>
   <%= if !@game.isGameOver?
-      link_to 'Bot Bowl', botchoice_game_path(@game), class: "btn btn-xs btn-link", :method => :put, class: "btn btn-warning"
+      link_to 'Choose BolwerBot', botchoice_game_path(@game), class: "btn btn-xs btn-link", :method => :put, class: "btn btn-warning"
     end
   %>
-  <%= if true #!@game.isGameOver?
+  <%= if !@game.isGameOver?
     link_to 'Reset', reset_game_path(@game), class: "btn btn-xs btn-link", :method => :put, class: "btn btn-danger", data: { confirm: 'Are you sure?' } 
     end 
+  %>
+  <%= if @game.isGameOver?
+    link_to "Start New Game", games_path, :method => :post, class: "btn btn-primary"
+    end
   %>
 </p>
 

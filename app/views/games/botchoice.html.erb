@@ -1,14 +1,16 @@
 <div class="jumbotron">
 	<center>
-	<h1>Pick Your BolwerBot</h1>
+	<h1>Choose Wisely...</h1>
 	
-	<p>Choose wisely...</p>
+	<p>The BowlerBot you choose will finish the game for you!</p>
 
-	<%= link_to 'PerfectBot', botbowl_game_path(@game, :game_type => "perfect"), class: "btn btn-xs btn-link", :method => :put, class: "btn btn-default"%>
-	<%= link_to 'MarkerBot', botbowl_game_path(@game, :game_type => "marker"), class: "btn btn-xs btn-link", :method => :put, class: "btn btn-default"%>
-	<%= link_to 'PickupBot', botbowl_game_path(@game, :game_type => "pickup"), class: "btn btn-xs btn-link", :method => :put, class: "btn btn-default"%>
-	<%= link_to 'ChokerBot', botbowl_game_path(@game, :game_type => "choker"), class: "btn btn-xs btn-link", :method => :put, class: "btn btn-default"%>
-	<%= link_to 'GutterBot', botbowl_game_path(@game, :game_type => "gutter"), class: "btn btn-xs btn-link", :method => :put, class: "btn btn-default"%>
-	<%= link_to 'RandomBot', botbowl_game_path(@game, :game_type => "random"), class: "btn btn-xs btn-link", :method => :put, class: "btn btn-default"%>
+	<%= link_to 'PerfectBot', botbowl_game_path(@game, :game_type => "perfect"), class: "btn btn-xs btn-link", :method => :put, class: "btn btn-info"%>
+	<%= link_to 'MarkerBot', botbowl_game_path(@game, :game_type => "marker"), class: "btn btn-xs btn-link", :method => :put, class: "btn btn-info"%>
+	<%= link_to 'PickupBot', botbowl_game_path(@game, :game_type => "pickup"), class: "btn btn-xs btn-link", :method => :put, class: "btn btn-info"%>
+	<%= link_to 'ChokerBot', botbowl_game_path(@game, :game_type => "choker"), class: "btn btn-xs btn-link", :method => :put, class: "btn btn-info"%>
+	<%= link_to 'GutterBot', botbowl_game_path(@game, :game_type => "gutter"), class: "btn btn-xs btn-link", :method => :put, class: "btn btn-info"%>
+	<%= link_to 'RandomBot', botbowl_game_path(@game, :game_type => "random"), class: "btn btn-xs btn-link", :method => :put, class: "btn btn-info"%>
+	<br><br>
+	<%= link_to 'Go Back to Game', :back, class: "btn btn-default"%>
 	</center>
 </div>
