@@ -74,6 +74,17 @@ class Game < ActiveRecord::Base
       else
         roll_value = bowlStrike
       end
+
+    # All Strikes excpet the last stroke
+    elsif game_type == "choker"
+      if self.frame_stroke == 3
+        self.bowled_pins = rand(0..9)
+        self.pins_left = 10 - self.bowled_pins
+        self.frames.where(frame_number: self.current_frame).update_all(pins_left: self.pins_left)
+        roll_value = self.bowled_pins
+      else
+        roll_value = bowlStrike
+      end
     end
 	end
 
