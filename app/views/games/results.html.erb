@@ -1,6 +1,13 @@
 <div class="jumbotron">
 	<center>
 	<h1>Thanks for playing Bowlerama</h1>
+
+	<% frame_total = 0
+        @game.frames.each do |frame| 
+          frame_total += @game.subZeroForNil(frame.frame_score) 
+        end 
+        @game.total_score = frame_total
+        @game.save%>
 	
 	<p><%= "Nice game! You scored a " + @game.total_score.to_s %></p>
 

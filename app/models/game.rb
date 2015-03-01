@@ -172,7 +172,6 @@ class Game < ActiveRecord::Base
       end
       self.frame_stroke = 1
       incrementFrameCount!
-      #insertRoll(10)
     # Handle Strikes and Spares for frame 10
     elsif self.current_frame == 10
       if self.frame_stroke == 1
@@ -337,7 +336,6 @@ class Game < ActiveRecord::Base
     self.rolls_will_change!
     self.rolls = []
     self.save!
-    self.save
   end
 
   def subZeroForNil( value )
@@ -453,7 +451,7 @@ class Game < ActiveRecord::Base
     while index <= 20 && frame_number <= 10
       frame_score = getFrameScore(index, frame_number)
       self.frames.where(frame_number: frame_number).update_all(frame_score: frame_score)
-      self.save
+      self.save!
       if isStrikeWithArrayIndex?(index)
         if index < 17
           index += 2
@@ -479,13 +477,12 @@ class Game < ActiveRecord::Base
     end
 
     self.total_score = score
-    self.save
+    self.save!
   end
 
   def bowl!(game_type)
     rollBall(game_type)
     markScorecard!
-    calculateTotalScore!
     setFrameScores!
     calculateTotalScore!
   end

@@ -81,7 +81,7 @@ class GamesController < ApplicationController
       respond_to do |format|
         if @game.save
           if !@game.isGameOver?
-            flash[:info] = "Game was successfully updated.  Your total score is #{@game.total_score.to_s}"
+            flash[:info] = "Game was successfully updated."#  Your total score is #{@game.total_score.to_s}"
             format.html { redirect_to @game, action: "show" }
             format.json { render :show, status: :ok, location: games_url }
           else
@@ -96,7 +96,7 @@ class GamesController < ApplicationController
       end
     else
       respond_to do |format|
-          format.html { redirect_to @game, action: "show", notice: 'Nice Game!  Your final score: ' + @game.total_score.to_s }
+          format.html { redirect_to @game, action: "show", notice: 'Nice Game!' } #Your final score: ' + @game.total_score.to_s }
           format.json { render :show, status: :ok, location: games_url }
       end
     end
@@ -108,9 +108,7 @@ class GamesController < ApplicationController
     if !@game.isGameOver?
 
       loop do
-
         @game.bowl!(game_type)
-        
         break if @game.isGameOver?
       end
 
