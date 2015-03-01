@@ -76,11 +76,7 @@ class GamesController < ApplicationController
   def bowl
     if !@game.isGameOver?
 
-      @game.rollBall("random")
-
-      @game.markScorecard!
-
-      @game.calculateGameDetails
+      @game.bowl!("random")
 
       respond_to do |format|
         if @game.save
@@ -113,13 +109,7 @@ class GamesController < ApplicationController
 
       loop do
 
-        @game.rollBall(game_type)
-        
-        @game.markScorecard!
-
-        @game.calculateGameDetails
-        
-        @game.save
+        @game.bowl!(game_type)
         
         break if @game.isGameOver?
       end

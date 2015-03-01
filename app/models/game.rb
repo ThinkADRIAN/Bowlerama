@@ -348,11 +348,6 @@ class Game < ActiveRecord::Base
     end
   end
 
-  def calculateGameDetails
-    setFrameScores!
-    calculateTotalScore!
-  end
-
   def isStrikeWithArrayIndex?(index)
     if self.rolls[index] == 10
       if index <= 18 && (index.even? || index == 0)
@@ -481,10 +476,17 @@ class Game < ActiveRecord::Base
     score = 0
     self.frames.each do |frame|
       score += self.subZeroForNil(frame.frame_score)
-      debugger
     end
 
     self.total_score = score
     self.save
+  end
+
+  def bowl!(game_type)
+    rollBall(game_type)
+    markScorecard!
+    calculateTotalScore!
+    setFrameScores!
+    calculateTotalScore!
   end
 end
