@@ -57,7 +57,7 @@ class Game < ActiveRecord::Base
       if self.frame_stroke == 1
         self.bowled_pins = rand(0..9)
         self.pins_left = 10 - self.bowled_pins
-        self.frames.where(frame_number: self.current_frame).update_all(pins_left: self.pins_left)
+        self.frames.where(frame_number: self.current_frame).update_all(bowled_pins: self.bowled_pins, pins_left: self.pins_left)
         roll_value = self.bowled_pins
       elsif self.frame_stroke == 2
         roll_value = bowlSpare
@@ -80,7 +80,7 @@ class Game < ActiveRecord::Base
       if self.frame_stroke == 3
         self.bowled_pins = rand(0..9)
         self.pins_left = 10 - self.bowled_pins
-        self.frames.where(frame_number: self.current_frame).update_all(pins_left: self.pins_left)
+        self.frames.where(frame_number: self.current_frame).update_all(bowled_pins: self.bowled_pins, pins_left: self.pins_left)
         roll_value = self.bowled_pins
       else
         roll_value = bowlStrike
@@ -90,7 +90,7 @@ class Game < ActiveRecord::Base
     elsif game_type == "gutter"
       self.bowled_pins = 0
       self.pins_left = 10
-      self.frames.where(frame_number: self.current_frame).update_all(pins_left: self.pins_left)
+      self.frames.where(frame_number: self.current_frame).update_all(bowled_pins: self.bowled_pins, pins_left: self.pins_left)
       roll_value = self.bowled_pins
     end
 	end
@@ -381,7 +381,7 @@ class Game < ActiveRecord::Base
     end
   end
 
-  def getFrameScoreArray(index, frame_number)
+  def getFrameScore(index, frame_number)
     if isStrikeWithArrayIndex?(index)
       if index < 15
         if isStrikeWithArrayIndex?(index+2) && isStrikeWithArrayIndex?(index+4)
@@ -453,9 +453,10 @@ class Game < ActiveRecord::Base
   def setFrameScores!
     index = 0
     frame_number = 1
+    score = 0 
 
     while index <= 20 && frame_number <= 10
-      frame_score = getFrameScoreArray(index, frame_number)
+      frame_score = getFrameScore(index, frame_number)
       self.frames.where(frame_number: frame_number).update_all(frame_score: frame_score)
       self.save
       if isStrikeWithArrayIndex?(index)
@@ -478,7 +479,7 @@ class Game < ActiveRecord::Base
 
   def calculateTotalScore!
     score = 0
-    self.frames.each do |frame| 
+    self.frames.each do |frame|
       score += self.subZeroForNil(frame.frame_score)
     end
     self.total_score = score
