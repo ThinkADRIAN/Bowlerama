@@ -46,4 +46,10 @@ gem 'spring',        group: :development
 # gem 'capistrano-rails', group: :development
 
 # Use debugger
+<<<<<<< HEAD
 gem 'debugger', group: [:development, :test]
+=======
+# gem 'debugger', group: [:development, :test]
+
+gem 'byebug', '~> 3.5.1'
+>>>>>>> 9ca1a98a6c4bcc063763df3aebef1e329c74dd91
